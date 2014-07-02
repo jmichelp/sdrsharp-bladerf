@@ -1,0 +1,1 @@
+<add key="BladeRF" value="SDRSharp.BladeRF.BladeRFIO,SDRSharp.BladeRF" />
