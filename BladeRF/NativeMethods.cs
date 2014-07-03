@@ -305,7 +305,7 @@ namespace SDRSharp.BladeRF
             bladerf_rational_rate rational_rate = new bladerf_rational_rate();
             bladerf_rational_rate rational_actual = new bladerf_rational_rate();
             rational_rate.integer = (UInt32) rate;
-            rational_rate.denom = 1000;
+            rational_rate.denom = 10000;
             rational_rate.num = (UInt64) ((rate - rational_rate.integer) * rational_rate.denom);
             actual = rational_rate.integer + rational_rate.num / (double)rational_rate.denom;
             int ret = bladerf_set_rational_sample_rate(dev, module, ref rational_rate, out rational_actual);
