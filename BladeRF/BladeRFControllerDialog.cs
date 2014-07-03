@@ -80,9 +80,9 @@ namespace SDRSharp.BladeRF
                 samplerateComboBox.Enabled = !_owner.Device.IsStreaming;
                 deviceComboBox.Enabled = !_owner.Device.IsStreaming;
                 samplingModeComboBox.Enabled = !_owner.Device.IsStreaming;
-                rxVga1GainTrackBar.Enabled = !_owner.Device.IsStreaming;
-                rxVga2GainTrackBar.Enabled = !_owner.Device.IsStreaming;
-                lnaGainTrackBar.Enabled = !_owner.Device.IsStreaming;
+                //rxVga1GainTrackBar.Enabled = !_owner.Device.IsStreaming;
+                //rxVga2GainTrackBar.Enabled = !_owner.Device.IsStreaming;
+                //lnaGainTrackBar.Enabled = !_owner.Device.IsStreaming;
                 xb200FilterCombobox.Enabled = (_owner.Device.IsStreaming == false) && (xb200Checkbox.Checked);
                 xb200Checkbox.Enabled = !_owner.Device.IsStreaming;
 
@@ -114,9 +114,9 @@ namespace SDRSharp.BladeRF
             samplerateComboBox.Enabled = !_owner.Device.IsStreaming;
             deviceComboBox.Enabled = !_owner.Device.IsStreaming;
             samplingModeComboBox.Enabled = !_owner.Device.IsStreaming;
-            rxVga1GainTrackBar.Enabled = !_owner.Device.IsStreaming;
-            rxVga2GainTrackBar.Enabled = !_owner.Device.IsStreaming;
-            lnaGainTrackBar.Enabled = !_owner.Device.IsStreaming;
+            //rxVga1GainTrackBar.Enabled = !_owner.Device.IsStreaming;
+            //rxVga2GainTrackBar.Enabled = !_owner.Device.IsStreaming;
+            //lnaGainTrackBar.Enabled = !_owner.Device.IsStreaming;
             xb200FilterCombobox.Enabled = (_owner.Device.IsStreaming == false) && (xb200Checkbox.Checked);
             xb200Checkbox.Enabled = !_owner.Device.IsStreaming;
         }
