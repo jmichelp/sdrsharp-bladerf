@@ -324,13 +324,13 @@ namespace SDRSharp.BladeRF
                     {
                         ushort tmp;
                         short sample_value;
-                        tmp = (ushort)samples[i];
+                        tmp = (ushort) (samples[i] & 0xfff);
                         if ((tmp & 0x0800) != 0)
                             tmp |= 0xf000;
                         sample_value = (short)tmp;
                         ptrIq->Imag = sample_value * (1.0f / 2048.0f);
                         i++;
-                        tmp = (ushort)samples[i];
+                        tmp = (ushort) (samples[i] & 0xfff);
                         if ((tmp & 0x0800) != 0)
                             tmp |= 0xf000;
                         sample_value = (short)tmp;
