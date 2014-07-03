@@ -352,6 +352,8 @@ namespace SDRSharp.BladeRF
 
         private void XB200AdjustFilterBank()
         {
+            if (!_xb200_enabled)
+                return;
             int error = 0;
             if (_centerFrequency >= 50000000 && _centerFrequency <= 54000000)
             {
@@ -441,12 +443,11 @@ namespace SDRSharp.BladeRF
                 _sampleThread = new Thread(ReceiveSamples_sync);
                 _sampleThread.Name = "bladerf_samples_rx";
                 _sampleThread.Priority = ThreadPriority.Highest;
+                _isStreaming = true;
                 _sampleThread.Start();
                 if ((error = NativeMethods.bladerf_enable_module(_dev, bladerf_module.BLADERF_MODULE_RX, 1)) != 0)
                     throw new ApplicationException(String.Format("bladerf_enable_module() error. {0}", NativeMethods.bladerf_strerror(error)));
             }
-
-            _isStreaming = true;
         }
 
         public void Stop()
