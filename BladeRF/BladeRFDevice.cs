@@ -13,8 +13,6 @@ namespace SDRSharp.BladeRF
         private const uint MaxFrequency = 3800000000;
         private string DeviceName = "BladeRF";
         private string _serial;
-        private static readonly unsafe float* _lutPtr;
-        private static readonly UnsafeBuffer _lutBuffer = UnsafeBuffer.Create(4096, sizeof(float));
         private IntPtr _dev;
         private long _centerFrequency = DefaultFrequency;
         private double _sampleRate = DefaultSamplerate;
@@ -239,16 +237,6 @@ namespace SDRSharp.BladeRF
             }
         }
 
-        static unsafe BladeRFDevice()
-        {
-            _lutPtr = (float*)_lutBuffer;
-            const float scale = 1.0f / 2047.0f;
-            for (int i = 0; i < 4096; ++i)
-            {
-                _lutPtr[i] = (i - 2048) * scale;
-            }
-        }
-
         public BladeRFDevice(string serial = "")
         {
             _isFpgaLoaded = false;
@@ -334,9 +322,19 @@ namespace SDRSharp.BladeRF
                     var ptrIq = _iqPtr;
                     for (int i = 0; i < 2 * _readLength; )
                     {
-                        ptrIq->Imag = _lutPtr[samples[i] & 0x0fff];
+                        ushort tmp;
+                        short sample_value;
+                        tmp = (ushort)samples[i];
+                        if ((tmp & 0x0800) != 0)
+                            tmp |= 0xf000;
+                        sample_value = (short)tmp;
+                        ptrIq->Imag = sample_value * (1.0f / 2048.0f);
                         i++;
-                        ptrIq->Real = _lutPtr[samples[i] & 0x0fff];
+                        tmp = (ushort)samples[i];
+                        if ((tmp & 0x0800) != 0)
+                            tmp |= 0xf000;
+                        sample_value = (short)tmp;
+                        ptrIq->Real = sample_value * (1.0f / 2048.0f);
                         i++;
                         ptrIq++;
                     }
