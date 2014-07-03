@@ -397,7 +397,12 @@ namespace SDRSharp.BladeRF
         }
 
         [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int bladerf_xb200_attach(IntPtr dev);
+        public static extern int bladerf_expansion_attach(IntPtr dev, bladerf_xb xb);
+
+        public static int bladerf_xb200_attach(IntPtr dev)
+        {
+            return bladerf_expansion_attach(dev, bladerf_xb.BLADERF_XB_200);
+        }
 
         [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_xb200_set_filterbank(IntPtr dev, bladerf_module mod, bladerf_xb200_filter filter);
