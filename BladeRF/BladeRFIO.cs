@@ -36,8 +36,11 @@ namespace SDRSharp.BladeRF
         public void Dispose()
         {
             Close();
-            _gui.Close();
-            _gui.Dispose();
+            if (_gui != null)
+            {
+                _gui.Close();
+                _gui.Dispose();
+            }
             GC.SuppressFinalize(this);
         }
 
