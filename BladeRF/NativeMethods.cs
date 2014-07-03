@@ -133,27 +133,27 @@ namespace SDRSharp.BladeRF
          * front end. Valid values are [-2048, 2048], which are scaled to the
          * available control bits in the LMS device.
          */
-        BLADERF_CORR_LMS_DCOFF_I = 1,
+        BLADERF_CORR_LMS_DCOFF_I = 0,
 
         /**
          * Adjusts the quadrature DC offset via controls provided the LMS6002D
          * front end. Valid values are [-2048, 2048], which are scaled to the
          * available control bits.
          */
-        BLADERF_CORR_LMS_DCOFF_Q = 2,
+        BLADERF_CORR_LMS_DCOFF_Q = 1,
 
         /**
          * Adjusts FPGA-based phase correction of [-10, 10] degrees, via a provided
          * count value of [-4096, 4096].
          */
-        BLADERF_CORR_FPGA_PHASE = 3,
+        BLADERF_CORR_FPGA_PHASE = 2,
 
         /**
          * Adjusts FPGA-based gain correction of [0.0, 2.0], via provided
          * values in the range of [-4096, 4096], where a value of 0 corresponds to
          * a gain of 1.0.
          */
-        BLADERF_CORR_FPGA_GAIN = 4
+        BLADERF_CORR_FPGA_GAIN = 3
     }
 
     public enum bladerf_format
