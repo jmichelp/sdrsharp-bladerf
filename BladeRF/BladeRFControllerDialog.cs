@@ -15,6 +15,7 @@ namespace SDRSharp.BladeRF
             InitializeComponent();
 
             InitSampleRates();
+            InitXB200Filters();
             _owner = owner;
             var devices = DeviceDisplay.GetActiveDevices();
             deviceComboBox.Items.Clear();
@@ -27,6 +28,9 @@ namespace SDRSharp.BladeRF
             rxVga2GainTrackBar.Value = Utils.GetIntSetting("BladeRFVGA2Gain", 20);
             lnaGainTrackBar.Value = Utils.GetIntSetting("BladeRFLNAGain", (int) bladerf_lna_gain.BLADERF_LNA_GAIN_MID);
             fpgaTextBox.Text = Utils.GetStringSetting("BladeRFFPGA", "");
+
+            xb200Checkbox.Checked = Utils.GetBooleanSetting("BladeRFXB200Enabled");
+            xb200FilterCombobox.SelectedIndex = Utils.GetIntSetting("BladeRFXB200Filter", 0);
 
             labelVersion.Text = "libbladerf " + NativeMethods.bladerf_version().describe;
 
@@ -45,6 +49,16 @@ namespace SDRSharp.BladeRF
                 samplerateComboBox.Items.Add(String.Format("0.{0} MSPS", i));
             samplerateComboBox.Items.Add("0.200 MSPS");
             samplerateComboBox.Items.Add("0.160 MSPS");
+        }
+
+        private void InitXB200Filters()
+        {
+            xb200FilterCombobox.Items.Clear();
+            xb200FilterCombobox.Items.Add("auto");
+            xb200FilterCombobox.Items.Add("50 MHz");
+            xb200FilterCombobox.Items.Add("144 MHz");
+            xb200FilterCombobox.Items.Add("222 MHz");
+            xb200FilterCombobox.Items.Add("Custom");
         }
 
         private void closeButton_Click(object sender, EventArgs e)
@@ -69,6 +83,8 @@ namespace SDRSharp.BladeRF
                 rxVga1GainTrackBar.Enabled = !_owner.Device.IsStreaming;
                 rxVga2GainTrackBar.Enabled = !_owner.Device.IsStreaming;
                 lnaGainTrackBar.Enabled = !_owner.Device.IsStreaming;
+                xb200FilterCombobox.Enabled = (_owner.Device.IsStreaming == false) && (xb200Checkbox.Checked);
+                xb200Checkbox.Enabled = !_owner.Device.IsStreaming;
 
                 if (!_owner.Device.IsStreaming)
                 {
@@ -101,6 +117,8 @@ namespace SDRSharp.BladeRF
             rxVga1GainTrackBar.Enabled = !_owner.Device.IsStreaming;
             rxVga2GainTrackBar.Enabled = !_owner.Device.IsStreaming;
             lnaGainTrackBar.Enabled = !_owner.Device.IsStreaming;
+            xb200FilterCombobox.Enabled = (_owner.Device.IsStreaming == false) && (xb200Checkbox.Checked);
+            xb200Checkbox.Enabled = !_owner.Device.IsStreaming;
         }
 
         private void deviceComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -165,6 +183,11 @@ namespace SDRSharp.BladeRF
         {
             samplerateComboBox_SelectedIndexChanged(null, null);
             samplingModeComboBox_SelectedIndexChanged(null, null);
+            rxVga1GainTrackBar_Scroll(null, null);
+            rxVga2GainTrackBar_Scroll(null, null);
+            lnaGainTrackBar_Scroll(null, null);
+            xb200Checkbox_CheckedChanged(null, null);
+            xb200FilterCombobox_SelectedIndexChanged(null, null);
         }
 
         private void rxVga1GainTrackBar_Scroll(object sender, EventArgs e)
@@ -212,6 +235,23 @@ namespace SDRSharp.BladeRF
                 Utils.SaveSetting("BladeRFFPGA", fpgaTextBox.Text);
                 _owner.Device.FPGAImage = fpgaTextBox.Text;
             }
+        }
+
+        private void xb200Checkbox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!_initialized)
+                return;
+            xb200FilterCombobox.Enabled = xb200Checkbox.Checked;
+            Utils.SaveSetting("BladeRFXB200Enabled", xb200Checkbox.Checked);
+            _owner.Device.XB200Enabled = xb200Checkbox.Checked;
+        }
+
+        private void xb200FilterCombobox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!_initialized)
+                return;
+            Utils.SaveSetting("BladeRFXB200Filter", xb200FilterCombobox.SelectedIndex);
+            _owner.Device.XB200Filter = xb200FilterCombobox.SelectedIndex;
         }
     }
 
