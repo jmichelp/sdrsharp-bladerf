@@ -407,6 +407,8 @@ namespace SDRSharp.BladeRF
                 throw new ApplicationException(String.Format("bladerf_set_loopback() error. {0}", NativeMethods.bladerf_strerror(error)));
             if ((error = NativeMethods.bladerf_set_sampling(_dev, _sampling)) != 0)
                 throw new ApplicationException(String.Format("bladerf_sampling() error. {0}", NativeMethods.bladerf_strerror(error)));
+            if ((error = NativeMethods.bladerf_set_lpf_mode(_dev, bladerf_module.BLADERF_MODULE_RX, bladerf_lpf_mode.BLADERF_LPF_NORMAL)) != 0)
+                throw new ApplicationException(String.Format("bladerf_set_lpf_mode() error. {0}", NativeMethods.bladerf_strerror(error)));
             if ((error = NativeMethods.bladerf_set_lna_gain(_dev, _lnaGain)) != 0)
                 throw new ApplicationException(String.Format("bladerf_set_lna_gain() error. {0}", NativeMethods.bladerf_strerror(error)));
             if ((error = NativeMethods.bladerf_set_rxvga1(_dev, _vga1Gain)) != 0)
