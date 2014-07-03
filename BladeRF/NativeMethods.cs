@@ -159,7 +159,23 @@ namespace SDRSharp.BladeRF
     public enum bladerf_format
     {
         BLADERF_FORMAT_SC16_Q11 = 0, /**< Signed, Complex 16-bit Q11.*/
-    } 
+    }
+
+    public enum bladerf_xb
+    {
+        BLADERF_XB_NONE = 0,
+        BLADERF_XB_100 = 1,
+        BLADERF_XB_200 = 2
+    }
+
+    public enum bladerf_xb200_filter
+    {
+        BLADERF_XB200_50M = 0,
+        BLADERF_XB200_144M = 1,
+        BLADERF_XB200_222M = 2,
+        BLADERF_XB200_CUSTOM = 3,
+        BLADERF_XB200_AUTO = -1
+    }
     #endregion
 
     #region Internal structs
@@ -379,5 +395,11 @@ namespace SDRSharp.BladeRF
                 return Marshal.PtrToStringAnsi(ret);
             return String.Empty;
         }
+
+        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int bladerf_xb200_attach(IntPtr dev);
+
+        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int bladerf_xb200_set_filterbank(IntPtr dev, bladerf_module mod, bladerf_xb200_filter filter);
     }
 }

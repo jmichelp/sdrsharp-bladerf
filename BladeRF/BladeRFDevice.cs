@@ -9,6 +9,8 @@ namespace SDRSharp.BladeRF
     {
         private const uint DefaultFrequency = 405500000U;
         private const int DefaultSamplerate = 4000000;
+        private const uint MinFrequency = 300000000;
+        private const uint MaxFrequency = 3800000000;
         private string DeviceName = "BladeRF";
         private string _serial;
         private static readonly unsafe float* _lutPtr;
@@ -31,6 +33,47 @@ namespace SDRSharp.BladeRF
         private static readonly uint _readLength = (uint)Utils.GetIntSetting("BladeRFBufferLength", 16 * 1024);
         private Thread _sampleThread = null;
         private static bladerf_version _version = NativeMethods.bladerf_version();
+        private static bool _xb200_enabled = Utils.GetBooleanSetting("BladeRFXB200Enabled");
+        private static bladerf_xb200_filter _xb200_filter = (bladerf_xb200_filter) (Utils.GetIntSetting("BladeRFXB200Filter", 0) - 1);
+
+        public bool XB200Enabled
+        {
+            get { return _xb200_enabled; }
+            set
+            {
+                _xb200_enabled = value;
+                if (_dev != IntPtr.Zero)
+                {
+                    NativeMethods.bladerf_xb200_attach(_dev);
+                }
+            }
+        }
+
+        public int XB200Filter
+        {
+            get { return (int) (_xb200_filter + 1); }
+            set
+            {
+                switch (value)
+                {
+                    case (int)bladerf_xb200_filter.BLADERF_XB200_AUTO:
+                        _xb200_filter = bladerf_xb200_filter.BLADERF_XB200_AUTO;
+                        break;
+                    case (int)bladerf_xb200_filter.BLADERF_XB200_50M:
+                        _xb200_filter = bladerf_xb200_filter.BLADERF_XB200_50M;
+                        break;
+                    case (int)bladerf_xb200_filter.BLADERF_XB200_144M:
+                        _xb200_filter = bladerf_xb200_filter.BLADERF_XB200_144M;
+                        break;
+                    case (int)bladerf_xb200_filter.BLADERF_XB200_222M:
+                        _xb200_filter = bladerf_xb200_filter.BLADERF_XB200_222M;
+                        break;
+                    default:
+                        _xb200_filter = bladerf_xb200_filter.BLADERF_XB200_CUSTOM;
+                        break;
+                }
+            }
+        }
 
         public string FPGAImage
         {
@@ -171,12 +214,19 @@ namespace SDRSharp.BladeRF
             }
             set
             {
+                uint real_frequency;
                 _centerFrequency = value;
+                if (_centerFrequency < MinFrequency && _xb200_enabled == false)
+                    _centerFrequency = MinFrequency;
+                if (_centerFrequency > MaxFrequency)
+                    _centerFrequency = MaxFrequency;
                 if (_dev != IntPtr.Zero)
                 {
+                    if (_xb200_filter == bladerf_xb200_filter.BLADERF_XB200_AUTO)
+                        XB200AdjustFilterBank();
                     NativeMethods.bladerf_set_frequency(_dev, bladerf_module.BLADERF_MODULE_RX, (uint)_centerFrequency);
-                    uint real_freq;
-                    NativeMethods.bladerf_get_frequency(_dev, bladerf_module.BLADERF_MODULE_RX, out real_freq);
+                    NativeMethods.bladerf_get_frequency(_dev, bladerf_module.BLADERF_MODULE_RX, out real_frequency);
+                    _centerFrequency = real_frequency;
                 }
             }
         }
@@ -300,6 +350,30 @@ namespace SDRSharp.BladeRF
             }
         }
 
+        private void XB200AdjustFilterBank()
+        {
+            int error = 0;
+            if (_centerFrequency >= 50000000 && _centerFrequency <= 54000000)
+            {
+                error = NativeMethods.bladerf_xb200_set_filterbank(_dev, bladerf_module.BLADERF_MODULE_RX, bladerf_xb200_filter.BLADERF_XB200_50M);
+            }
+            else if (_centerFrequency >= 149000000 && _centerFrequency <= 159000000)
+            {
+                error = NativeMethods.bladerf_xb200_set_filterbank(_dev, bladerf_module.BLADERF_MODULE_RX, bladerf_xb200_filter.BLADERF_XB200_144M);
+            }
+            else if (_centerFrequency >= 206000000 && _centerFrequency <= 235000000)
+            {
+                error = NativeMethods.bladerf_xb200_set_filterbank(_dev, bladerf_module.BLADERF_MODULE_RX, bladerf_xb200_filter.BLADERF_XB200_222M);
+            }
+            else
+            {
+                error = NativeMethods.bladerf_xb200_set_filterbank(_dev, bladerf_module.BLADERF_MODULE_RX, bladerf_xb200_filter.BLADERF_XB200_CUSTOM);
+            }
+
+            if (error != 0)
+                throw new ApplicationException(String.Format("bladerf_xb200_set_filterbank() error. {0}", NativeMethods.bladerf_strerror(error)));
+        }
+
         public unsafe void Start()
         {
             int error;
@@ -339,6 +413,20 @@ namespace SDRSharp.BladeRF
                 throw new ApplicationException(String.Format("bladerf_set_rxvga1() error. {0}", NativeMethods.bladerf_strerror(error)));
             if ((error = NativeMethods.bladerf_set_rxvga2(_dev, _vga2Gain)) != 0)
                 throw new ApplicationException(String.Format("bladerf_set_rxvga2() error. {0}", NativeMethods.bladerf_strerror(error)));
+            if (_xb200_enabled)
+            {
+                if ((error = NativeMethods.bladerf_xb200_attach(_dev)) != 0)
+                    throw new ApplicationException(String.Format("bladerf_xb200_attach() error. {0}", NativeMethods.bladerf_strerror(error)));
+                if (_xb200_filter == bladerf_xb200_filter.BLADERF_XB200_AUTO)
+                {
+                    XB200AdjustFilterBank();
+                }
+                else
+                {
+                    if ((error = NativeMethods.bladerf_xb200_set_filterbank(_dev, bladerf_module.BLADERF_MODULE_RX, _xb200_filter)) != 0)
+                        throw new ApplicationException(String.Format("bladerf_xb200_set_filterbank() error. {0}", NativeMethods.bladerf_strerror(error)));
+                }                    
+            }
             if ((error = NativeMethods.bladerf_set_frequency(_dev, bladerf_module.BLADERF_MODULE_RX, (uint)_centerFrequency)) != 0)
                 throw new ApplicationException(String.Format("bladerf_set_frequency() error. {0}", NativeMethods.bladerf_strerror(error)));
             if (_version.major == 0 && _version.minor < 14)
@@ -352,6 +440,7 @@ namespace SDRSharp.BladeRF
                     throw new ApplicationException(String.Format("bladerf_sync_config() error. {0}", NativeMethods.bladerf_strerror(error)));
                 _sampleThread = new Thread(ReceiveSamples_sync);
                 _sampleThread.Name = "bladerf_samples_rx";
+                _sampleThread.Priority = ThreadPriority.Highest;
                 _sampleThread.Start();
                 if ((error = NativeMethods.bladerf_enable_module(_dev, bladerf_module.BLADERF_MODULE_RX, 1)) != 0)
                     throw new ApplicationException(String.Format("bladerf_enable_module() error. {0}", NativeMethods.bladerf_strerror(error)));
@@ -372,7 +461,8 @@ namespace SDRSharp.BladeRF
             
             if (_sampleThread != null)
             {
-                _sampleThread.Join();
+                if (_sampleThread.ThreadState == ThreadState.Running)
+                    _sampleThread.Join();
                 _sampleThread = null;
             }
 

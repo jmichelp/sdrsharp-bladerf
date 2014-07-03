@@ -52,9 +52,14 @@
             this.fpgaButton = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.labelVersion = new System.Windows.Forms.Label();
+            this.xb200Checkbox = new System.Windows.Forms.CheckBox();
+            this.xb200FilterCombobox = new System.Windows.Forms.ComboBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label8 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.rxVga2GainTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.rxVga1GainTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.lnaGainTrackBar)).BeginInit();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // refreshTimer
@@ -65,7 +70,7 @@
             // closeButton
             // 
             this.closeButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.closeButton.Location = new System.Drawing.Point(183, 377);
+            this.closeButton.Location = new System.Drawing.Point(182, 476);
             this.closeButton.Name = "closeButton";
             this.closeButton.Size = new System.Drawing.Size(75, 23);
             this.closeButton.TabIndex = 8;
@@ -243,7 +248,7 @@
             // 
             // fpgaTextBox
             // 
-            this.fpgaTextBox.Location = new System.Drawing.Point(12, 341);
+            this.fpgaTextBox.Location = new System.Drawing.Point(11, 440);
             this.fpgaTextBox.Name = "fpgaTextBox";
             this.fpgaTextBox.ReadOnly = true;
             this.fpgaTextBox.Size = new System.Drawing.Size(160, 20);
@@ -251,7 +256,7 @@
             // 
             // fpgaButton
             // 
-            this.fpgaButton.Location = new System.Drawing.Point(184, 338);
+            this.fpgaButton.Location = new System.Drawing.Point(183, 437);
             this.fpgaButton.Name = "fpgaButton";
             this.fpgaButton.Size = new System.Drawing.Size(75, 23);
             this.fpgaButton.TabIndex = 39;
@@ -262,7 +267,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(12, 325);
+            this.label4.Location = new System.Drawing.Point(11, 424);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(54, 13);
             this.label4.TabIndex = 40;
@@ -270,17 +275,61 @@
             // 
             // labelVersion
             // 
-            this.labelVersion.Location = new System.Drawing.Point(9, 387);
+            this.labelVersion.Location = new System.Drawing.Point(8, 486);
             this.labelVersion.Name = "labelVersion";
             this.labelVersion.Size = new System.Drawing.Size(168, 23);
             this.labelVersion.TabIndex = 41;
+            // 
+            // xb200Checkbox
+            // 
+            this.xb200Checkbox.AutoSize = true;
+            this.xb200Checkbox.Location = new System.Drawing.Point(6, 23);
+            this.xb200Checkbox.Name = "xb200Checkbox";
+            this.xb200Checkbox.Size = new System.Drawing.Size(184, 17);
+            this.xb200Checkbox.TabIndex = 42;
+            this.xb200Checkbox.Text = "Enable XB-200 Transverter board";
+            this.xb200Checkbox.UseVisualStyleBackColor = true;
+            this.xb200Checkbox.CheckedChanged += new System.EventHandler(this.xb200Checkbox_CheckedChanged);
+            // 
+            // xb200FilterCombobox
+            // 
+            this.xb200FilterCombobox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.xb200FilterCombobox.Enabled = false;
+            this.xb200FilterCombobox.FormattingEnabled = true;
+            this.xb200FilterCombobox.Location = new System.Drawing.Point(6, 64);
+            this.xb200FilterCombobox.Name = "xb200FilterCombobox";
+            this.xb200FilterCombobox.Size = new System.Drawing.Size(235, 21);
+            this.xb200FilterCombobox.TabIndex = 43;
+            this.xb200FilterCombobox.SelectedIndexChanged += new System.EventHandler(this.xb200FilterCombobox_SelectedIndexChanged);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.label8);
+            this.groupBox1.Controls.Add(this.xb200Checkbox);
+            this.groupBox1.Controls.Add(this.xb200FilterCombobox);
+            this.groupBox1.Location = new System.Drawing.Point(12, 321);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(247, 100);
+            this.groupBox1.TabIndex = 44;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "XB-200 configuration";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(6, 48);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(56, 13);
+            this.label8.TabIndex = 44;
+            this.label8.Text = "Filter bank";
             // 
             // BladeRFControllerDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.closeButton;
-            this.ClientSize = new System.Drawing.Size(271, 409);
+            this.ClientSize = new System.Drawing.Size(272, 516);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.labelVersion);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.fpgaButton);
@@ -316,6 +365,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.rxVga2GainTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.rxVga1GainTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.lnaGainTrackBar)).EndInit();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -346,6 +397,10 @@
         private System.Windows.Forms.Button fpgaButton;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label labelVersion;
+        private System.Windows.Forms.CheckBox xb200Checkbox;
+        private System.Windows.Forms.ComboBox xb200FilterCombobox;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Label label8;
     }
 }
 
