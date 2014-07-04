@@ -34,6 +34,11 @@ namespace SDRSharp.BladeRF
         private static bool _xb200_enabled = Utils.GetBooleanSetting("BladeRFXB200Enabled");
         private static bladerf_xb200_filter _xb200_filter = (bladerf_xb200_filter) (Utils.GetIntSetting("BladeRFXB200Filter", 0) - 1);
 
+        private static readonly unsafe float* _lutPtr;
+        private static readonly UnsafeBuffer _lutBuffer = UnsafeBuffer.Create(4096, sizeof(float));
+        private UnsafeBuffer _samplesBuffer;
+        private unsafe Int16* _samplesPtr;
+
         public bool XB200Enabled
         {
             get { return _xb200_enabled; }
@@ -237,6 +242,16 @@ namespace SDRSharp.BladeRF
             }
         }
 
+        static unsafe BladeRFDevice()
+        {
+            _lutPtr = (float*)_lutBuffer;
+            const float scale = 1.0f / 2048.0f;
+            for (int i = 0; i < 4096; ++i)
+            {
+                _lutPtr[i] = (((i + 2048) % 4096) - 2048) * scale;
+            }
+        }
+
         public BladeRFDevice(string serial = "")
         {
             _isFpgaLoaded = false;
@@ -305,37 +320,32 @@ namespace SDRSharp.BladeRF
 
         private unsafe void ReceiveSamples_sync()
         {
-            Int16[] samples = new Int16[2 * _readLength];
             if (_iqBuffer == null || _iqBuffer.Length != _readLength)
             {
                 _iqBuffer = UnsafeBuffer.Create((int)_readLength, sizeof(Complex));
                 _iqPtr = (Complex*)_iqBuffer;
+            }
+            if (_samplesBuffer == null || _samplesBuffer.Length != (2 * _readLength))
+            {
+                _samplesBuffer = UnsafeBuffer.Create((int)(2 * _readLength), sizeof(Int16));
+                _samplesPtr = (Int16*)_samplesBuffer;
             }
             int status = 0;
             while (status == 0 && this._isStreaming)
             {
                 try
                 {
-                    status = NativeMethods.bladerf_sync_rx(_dev, ref samples, _readLength, (uint)3500);
+                    status = NativeMethods.bladerf_sync_rx(_dev, _samplesPtr, _readLength, IntPtr.Zero, (uint)3500);
                     if (status != 0)
                         throw new ApplicationException(String.Format("bladerf_rx() error. {0}", NativeMethods.bladerf_strerror(status)));
                     var ptrIq = _iqPtr;
-                    for (int i = 0; i < 2 * _readLength; )
+                    var ptrSample = _samplesPtr;
+                    for (int i = 0; i < _readLength; i++)
                     {
-                        ushort tmp;
-                        short sample_value;
-                        tmp = (ushort) (samples[i] & 0xfff);
-                        if ((tmp & 0x0800) != 0)
-                            tmp |= 0xf000;
-                        sample_value = (short)tmp;
-                        ptrIq->Imag = sample_value * (1.0f / 2048.0f);
-                        i++;
-                        tmp = (ushort) (samples[i] & 0xfff);
-                        if ((tmp & 0x0800) != 0)
-                            tmp |= 0xf000;
-                        sample_value = (short)tmp;
-                        ptrIq->Real = sample_value * (1.0f / 2048.0f);
-                        i++;
+                        ptrIq->Imag = _lutPtr[*ptrSample & 0x0fff];
+                        ptrSample++;
+                        ptrIq->Real = _lutPtr[*ptrSample & 0x0fff];
+                        ptrSample++;
                         ptrIq++;
                     }
                     ComplexSamplesAvailable(_iqPtr, _iqBuffer.Length);

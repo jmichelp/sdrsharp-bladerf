@@ -255,20 +255,8 @@ namespace SDRSharp.BladeRF
         [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_sync_config(IntPtr dev, bladerf_module module, bladerf_format format, uint num_buffers, uint buffer_size, uint num_transfers, uint stream_timeout);
 
-        [DllImport("bladerf", EntryPoint = "bladerf_sync_rx", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int bladerf_sync_rx_native(IntPtr dev, IntPtr samples, uint num_samples, IntPtr metadata, uint timeout_ms);
-
-        public static int bladerf_sync_rx(IntPtr dev, ref Int16[] samples, uint num_samples, uint timeout_ms)
-        {
-            IntPtr p = Marshal.AllocHGlobal(Marshal.SizeOf(samples[0]) * samples.Length);
-            int rv = bladerf_sync_rx_native(dev, p, num_samples, IntPtr.Zero, timeout_ms);
-            if (rv == 0)
-            {
-                Marshal.Copy(p, samples, 0, samples.Length);
-            }
-            Marshal.FreeHGlobal(p);
-            return rv;
-        }
+        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        public static unsafe extern int bladerf_sync_rx(IntPtr dev, Int16* samples, uint num_samples, IntPtr metadata, uint timeout_ms);
 
         [DllImport("bladerf", EntryPoint = "bladerf_rx", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_rx_native(IntPtr dev, bladerf_format format, ref Int16[] samples, uint num_samples, ref bladerf_metadata metadata);
