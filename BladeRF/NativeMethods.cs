@@ -176,6 +176,17 @@ namespace SDRSharp.BladeRF
         BLADERF_XB200_CUSTOM = 3,
         BLADERF_XB200_AUTO = -1
     }
+
+    public enum bladerf_log_level
+    {
+        BLADERF_LOG_LEVEL_VERBOSE = 0,  /**< Verbose level logging */
+        BLADERF_LOG_LEVEL_DEBUG = 1,    /**< Debug level logging */
+        BLADERF_LOG_LEVEL_INFO = 2,     /**< Information level logging */
+        BLADERF_LOG_LEVEL_WARNING = 3,  /**< Warning level logging */
+        BLADERF_LOG_LEVEL_ERROR = 4,    /**< Error level logging */
+        BLADERF_LOG_LEVEL_CRITICAL = 5, /**< Fatal error level logging */
+        BLADERF_LOG_LEVEL_SILENT = 6    /**< No output */
+    }
     #endregion
 
     #region Internal structs
@@ -394,5 +405,8 @@ namespace SDRSharp.BladeRF
 
         [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_xb200_set_filterbank(IntPtr dev, bladerf_module mod, bladerf_xb200_filter filter);
+
+        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void bladerf_log_set_verbosity(bladerf_log_level level);
     }
 }
