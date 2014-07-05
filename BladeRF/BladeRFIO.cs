@@ -24,7 +24,6 @@ namespace SDRSharp.BladeRF
             if (v.major == 0 && v.minor < 14)
             {
                 MessageBox.Show(String.Format("Your bladerf.dll is outdated. Upgrade to v0.14+ (now using {0})", v.describe));
-                //throw new ApplicationException("outdated bladerf.dll");
             }
         }
 

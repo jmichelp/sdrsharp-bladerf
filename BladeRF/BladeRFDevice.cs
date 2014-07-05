@@ -45,7 +45,7 @@ namespace SDRSharp.BladeRF
             set
             {
                 _xb200_enabled = value;
-                if (_dev != IntPtr.Zero)
+                if (value == true && _dev != IntPtr.Zero)
                 {
                     NativeMethods.bladerf_xb200_attach(_dev);
                 }
@@ -57,7 +57,7 @@ namespace SDRSharp.BladeRF
             get { return (int) (_xb200_filter + 1); }
             set
             {
-                switch (value)
+                switch (value - 1)
                 {
                     case (int)bladerf_xb200_filter.BLADERF_XB200_AUTO:
                         _xb200_filter = bladerf_xb200_filter.BLADERF_XB200_AUTO;
@@ -362,6 +362,8 @@ namespace SDRSharp.BladeRF
         {
             if (!_xb200_enabled)
                 return;
+            if (_centerFrequency >= MinFrequency)
+                return;
             int error = 0;
             if (_centerFrequency >= 50000000 && _centerFrequency <= 54000000)
             {
@@ -437,7 +439,7 @@ namespace SDRSharp.BladeRF
                 {
                     if ((error = NativeMethods.bladerf_xb200_set_filterbank(_dev, bladerf_module.BLADERF_MODULE_RX, _xb200_filter)) != 0)
                         throw new ApplicationException(String.Format("bladerf_xb200_set_filterbank() error. {0}", NativeMethods.bladerf_strerror(error)));
-                }                    
+                }
             }
             if ((error = NativeMethods.bladerf_set_frequency(_dev, bladerf_module.BLADERF_MODULE_RX, (uint)_centerFrequency)) != 0)
                 throw new ApplicationException(String.Format("bladerf_set_frequency() error. {0}", NativeMethods.bladerf_strerror(error)));
