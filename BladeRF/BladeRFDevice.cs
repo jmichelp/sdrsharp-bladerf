@@ -11,6 +11,9 @@ namespace SDRSharp.BladeRF
         private const int DefaultSamplerate = 4000000;
         private const uint MinFrequency = 300000000;
         private const uint MaxFrequency = 3800000000;
+        private const uint SampleTimeoutMs = 3000;
+        private const uint NumBuffers = 32;
+
         private string DeviceName = "BladeRF";
         private string _serial;
         private IntPtr _dev;
@@ -28,7 +31,7 @@ namespace SDRSharp.BladeRF
         private bool _isStreaming;
         private string _devSpec;
         private readonly SamplesAvailableEventArgs _eventArgs = new SamplesAvailableEventArgs();
-        private static readonly uint _readLength = (uint)Utils.GetIntSetting("BladeRFBufferLength", 16 * 1024);
+        private static readonly uint _readLength = (uint)Utils.GetIntSetting("BladeRFBufferLength", 4096);
         private Thread _sampleThread = null;
         private static bladerf_version _version = NativeMethods.bladerf_version();
         private static bool _xb200_enabled = Utils.GetBooleanSetting("BladeRFXB200Enabled");
@@ -270,6 +273,9 @@ namespace SDRSharp.BladeRF
             DeviceName = String.Format("BladeRF SN#{0}", serial);
             NativeMethods.bladerf_close(_dev);
             _dev = IntPtr.Zero;
+#if DEBUG
+            NativeMethods.bladerf_log_set_verbosity(bladerf_log_level.BLADERF_LOG_LEVEL_VERBOSE);
+#endif
         }
 
         ~BladeRFDevice()
@@ -335,7 +341,7 @@ namespace SDRSharp.BladeRF
             {
                 try
                 {
-                    status = NativeMethods.bladerf_sync_rx(_dev, _samplesPtr, _readLength, IntPtr.Zero, (uint)3500);
+                    status = NativeMethods.bladerf_sync_rx(_dev, _samplesPtr, _readLength, IntPtr.Zero, SampleTimeoutMs);
                     if (status != 0)
                         throw new ApplicationException(String.Format("bladerf_rx() error. {0}", NativeMethods.bladerf_strerror(status)));
                     var ptrIq = _iqPtr;
@@ -450,7 +456,7 @@ namespace SDRSharp.BladeRF
             else
             {
                 // new sync interface
-                if ((error = NativeMethods.bladerf_sync_config(_dev, bladerf_module.BLADERF_MODULE_RX, bladerf_format.BLADERF_FORMAT_SC16_Q11, 64, 4 * _readLength, 16, 3500)) != 0)
+                if ((error = NativeMethods.bladerf_sync_config(_dev, bladerf_module.BLADERF_MODULE_RX, bladerf_format.BLADERF_FORMAT_SC16_Q11, NumBuffers, _readLength, NumBuffers / 2, SampleTimeoutMs)) != 0)
                     throw new ApplicationException(String.Format("bladerf_sync_config() error. {0}", NativeMethods.bladerf_strerror(error)));
                 _sampleThread = new Thread(ReceiveSamples_sync);
                 _sampleThread.Name = "bladerf_samples_rx";
