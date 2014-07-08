@@ -34,7 +34,9 @@ namespace SDRSharp.BladeRF
         BLADERF_ERR_UNSUPPORTED = -8,  /**< Operation not supported */
         BLADERF_ERR_MISALIGNED = -9,  /**< Misaligned flash access */
         BLADERF_ERR_CHECKSUM = -10, /**< Invalid checksum */
-        BLADERF_ERR_NO_FILE = -11 /**< File not found */
+        BLADERF_ERR_NO_FILE = -11, /**< File not found */
+        BLADERF_ERR_UPDATE_FPGA = -12, /**< An FPGA update is required */
+        BLADERF_ERR_UPDATE_FW = -13 /**< A firmware update is requied */
     }
 
     public enum bladerf_module
