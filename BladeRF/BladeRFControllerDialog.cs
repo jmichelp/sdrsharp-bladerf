@@ -14,9 +14,10 @@ namespace SDRSharp.BladeRF
         {
             InitializeComponent();
 
-            InitSampleRates();
-            InitXB200Filters();
             _owner = owner;
+            InitSampleRates();
+            InitBandwidths();
+            InitXB200Filters();
             var devices = DeviceDisplay.GetActiveDevices();
             deviceComboBox.Items.Clear();
             if (devices != null)
@@ -28,6 +29,7 @@ namespace SDRSharp.BladeRF
             rxVga2GainTrackBar.Value = Utils.GetIntSetting("BladeRFVGA2Gain", 20);
             lnaGainTrackBar.Value = Utils.GetIntSetting("BladeRFLNAGain", (int) bladerf_lna_gain.BLADERF_LNA_GAIN_MID);
             fpgaTextBox.Text = Utils.GetStringSetting("BladeRFFPGA", "");
+            bandwidthComboBox.SelectedIndex = Utils.GetIntSetting("BladeRFBandwidth", 0);
 
             xb200Checkbox.Checked = Utils.GetBooleanSetting("BladeRFXB200Enabled");
             xb200FilterCombobox.SelectedIndex = Utils.GetIntSetting("BladeRFXB200Filter", 0);
@@ -51,6 +53,30 @@ namespace SDRSharp.BladeRF
             samplerateComboBox.Items.Add("0.160 MSPS");
         }
 
+        private void InitBandwidths()
+        {
+            bandwidthComboBox.Items.Clear();
+            bandwidthComboBox.DisplayMember = "Text";
+            bandwidthComboBox.ValueMember = "Value";
+            bandwidthComboBox.Items.Add(new ComboboxItem("auto", 0));
+            bandwidthComboBox.Items.Add(new ComboboxItem("28 MHz", 28000000));
+            bandwidthComboBox.Items.Add(new ComboboxItem("20 MHz", 20000000));
+            bandwidthComboBox.Items.Add(new ComboboxItem("14 MHz", 14000000));
+            bandwidthComboBox.Items.Add(new ComboboxItem("12 MHz", 12000000));
+            bandwidthComboBox.Items.Add(new ComboboxItem("10 MHz", 10000000));
+            bandwidthComboBox.Items.Add(new ComboboxItem("8.75 MHz", 8750000));
+            bandwidthComboBox.Items.Add(new ComboboxItem("7 MHz", 7000000));
+            bandwidthComboBox.Items.Add(new ComboboxItem("6 MHz", 6000000));
+            bandwidthComboBox.Items.Add(new ComboboxItem("5.5 MHz", 5500000));
+            bandwidthComboBox.Items.Add(new ComboboxItem("5 MHz", 5000000));
+            bandwidthComboBox.Items.Add(new ComboboxItem("3.84 MHz", 3840000));
+            bandwidthComboBox.Items.Add(new ComboboxItem("3 MHz", 3000000));
+            bandwidthComboBox.Items.Add(new ComboboxItem("2.75 MHz", 2750000));
+            bandwidthComboBox.Items.Add(new ComboboxItem("2.5 MHz", 2500000));
+            bandwidthComboBox.Items.Add(new ComboboxItem("1.75 MHz", 1750000));
+            bandwidthComboBox.Items.Add(new ComboboxItem("1.5 MHz", 1500000));
+        }
+
         private void InitXB200Filters()
         {
             xb200FilterCombobox.Items.Clear();
@@ -59,6 +85,8 @@ namespace SDRSharp.BladeRF
             xb200FilterCombobox.Items.Add("144 MHz");
             xb200FilterCombobox.Items.Add("222 MHz");
             xb200FilterCombobox.Items.Add("Custom");
+            xb200FilterCombobox.Items.Add("Auto (1dB)");
+            xb200FilterCombobox.Items.Add("Auto (3dB)");
         }
 
         private void closeButton_Click(object sender, EventArgs e)
@@ -80,11 +108,9 @@ namespace SDRSharp.BladeRF
                 samplerateComboBox.Enabled = !_owner.Device.IsStreaming;
                 deviceComboBox.Enabled = !_owner.Device.IsStreaming;
                 samplingModeComboBox.Enabled = !_owner.Device.IsStreaming;
-                //rxVga1GainTrackBar.Enabled = !_owner.Device.IsStreaming;
-                //rxVga2GainTrackBar.Enabled = !_owner.Device.IsStreaming;
-                //lnaGainTrackBar.Enabled = !_owner.Device.IsStreaming;
                 xb200FilterCombobox.Enabled = (_owner.Device.IsStreaming == false) && (xb200Checkbox.Checked);
                 xb200Checkbox.Enabled = !_owner.Device.IsStreaming;
+                bandwidthComboBox.Enabled = !_owner.Device.IsStreaming;
 
                 if (!_owner.Device.IsStreaming)
                 {
@@ -114,11 +140,9 @@ namespace SDRSharp.BladeRF
             samplerateComboBox.Enabled = !_owner.Device.IsStreaming;
             deviceComboBox.Enabled = !_owner.Device.IsStreaming;
             samplingModeComboBox.Enabled = !_owner.Device.IsStreaming;
-            //rxVga1GainTrackBar.Enabled = !_owner.Device.IsStreaming;
-            //rxVga2GainTrackBar.Enabled = !_owner.Device.IsStreaming;
-            //lnaGainTrackBar.Enabled = !_owner.Device.IsStreaming;
             xb200FilterCombobox.Enabled = (_owner.Device.IsStreaming == false) && (xb200Checkbox.Checked);
             xb200Checkbox.Enabled = !_owner.Device.IsStreaming;
+            bandwidthComboBox.Enabled = !_owner.Device.IsStreaming;
         }
 
         private void deviceComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -188,6 +212,7 @@ namespace SDRSharp.BladeRF
             lnaGainTrackBar_Scroll(null, null);
             xb200Checkbox_CheckedChanged(null, null);
             xb200FilterCombobox_SelectedIndexChanged(null, null);
+            bandwidthComboBox_SelectedIndexChanged(null, null);
         }
 
         private void rxVga1GainTrackBar_Scroll(object sender, EventArgs e)
@@ -252,6 +277,38 @@ namespace SDRSharp.BladeRF
                 return;
             Utils.SaveSetting("BladeRFXB200Filter", xb200FilterCombobox.SelectedIndex);
             _owner.Device.XB200Filter = xb200FilterCombobox.SelectedIndex;
+        }
+
+        private void bandwidthComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!_initialized)
+                return;
+            Utils.SaveSetting("BladeRFBandwidth", bandwidthComboBox.SelectedIndex);
+            try
+            {
+                _owner.Device.Bandwidth = (bandwidthComboBox.SelectedItem as ComboboxItem).Value;
+            }
+            catch
+            {
+                _owner.Device.Bandwidth = 0;
+            }
+        }
+
+        private class ComboboxItem
+        {
+            public string Text { get; set; }
+            public int Value { get; set; }
+
+            public ComboboxItem(string text, int value)
+            {
+                Text = text;
+                Value = value;
+            }
+
+            public override string ToString()
+            {
+                return Text;
+            }
         }
     }
 

@@ -176,6 +176,8 @@ namespace SDRSharp.BladeRF
         BLADERF_XB200_144M = 1,
         BLADERF_XB200_222M = 2,
         BLADERF_XB200_CUSTOM = 3,
+        BLADERF_XB200_AUTO_1DB = 4,
+        BLADERF_XB200_AUTO_3DB = 5,
         BLADERF_XB200_AUTO = -1
     }
 
