@@ -110,7 +110,6 @@ namespace SDRSharp.BladeRF
                 samplingModeComboBox.Enabled = !_owner.Device.IsStreaming;
                 xb200FilterCombobox.Enabled = (_owner.Device.IsStreaming == false) && (xb200Checkbox.Checked);
                 xb200Checkbox.Enabled = !_owner.Device.IsStreaming;
-                bandwidthComboBox.Enabled = !_owner.Device.IsStreaming;
 
                 if (!_owner.Device.IsStreaming)
                 {
@@ -142,7 +141,6 @@ namespace SDRSharp.BladeRF
             samplingModeComboBox.Enabled = !_owner.Device.IsStreaming;
             xb200FilterCombobox.Enabled = (_owner.Device.IsStreaming == false) && (xb200Checkbox.Checked);
             xb200Checkbox.Enabled = !_owner.Device.IsStreaming;
-            bandwidthComboBox.Enabled = !_owner.Device.IsStreaming;
         }
 
         private void deviceComboBox_SelectedIndexChanged(object sender, EventArgs e)
