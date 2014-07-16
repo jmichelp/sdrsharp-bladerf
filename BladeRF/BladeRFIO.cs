@@ -7,7 +7,7 @@ using SDRSharp.Radio;
 
 namespace SDRSharp.BladeRF
 {
-    public class BladeRFIO:  IFrontendController, IDisposable
+    public class BladeRFIO : IFrontendController, IDisposable, ISampleRateChangeSource
     {
         private const string _displayName = "BladeRF";
         private readonly BladeRFControllerDialog _gui;
@@ -15,6 +15,7 @@ namespace SDRSharp.BladeRF
         private long _frequency;
         private double _frequencyCorrection;
         private SDRSharp.Radio.SamplesAvailableDelegate _callback;
+        public event EventHandler SampleRateChanged;
 
         public BladeRFIO()
         {
@@ -48,6 +49,7 @@ namespace SDRSharp.BladeRF
             Close();
             _bladeRFDevice = new BladeRFDevice(serial);
             _bladeRFDevice.SamplesAvailable += BladeRFDevice_SamplesAvailable;
+            _bladeRFDevice.SampleRateChanged += BladeRFDevice_SampleRateChanged;
             _bladeRFDevice.Frequency = _frequency;
             _gui.ConfigureGUI();
             _gui.ConfigureDevice();
@@ -88,8 +90,15 @@ namespace SDRSharp.BladeRF
             if (_bladeRFDevice == null)
                 return;
             _bladeRFDevice.SamplesAvailable -= BladeRFDevice_SamplesAvailable;
+            _bladeRFDevice.SampleRateChanged -= BladeRFDevice_SampleRateChanged;
             _bladeRFDevice.Dispose();
             _bladeRFDevice = null;
+        }
+
+        private void BladeRFDevice_SampleRateChanged(object sender, EventArgs e)
+        {
+            if (SampleRateChanged != null)
+                SampleRateChanged(this, EventArgs.Empty);
         }
 
         public void Start(SDRSharp.Radio.SamplesAvailableDelegate callback)

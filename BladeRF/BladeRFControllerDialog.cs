@@ -105,7 +105,6 @@ namespace SDRSharp.BladeRF
             refreshTimer.Enabled = Visible;
             if (Visible)
             {
-                samplerateComboBox.Enabled = !_owner.Device.IsStreaming;
                 deviceComboBox.Enabled = !_owner.Device.IsStreaming;
                 samplingModeComboBox.Enabled = !_owner.Device.IsStreaming;
                 xb200FilterCombobox.Enabled = (_owner.Device.IsStreaming == false) && (xb200Checkbox.Checked);
@@ -136,7 +135,6 @@ namespace SDRSharp.BladeRF
 
         private void refreshTimer_Tick(object sender, EventArgs e)
         {
-            samplerateComboBox.Enabled = !_owner.Device.IsStreaming;
             deviceComboBox.Enabled = !_owner.Device.IsStreaming;
             samplingModeComboBox.Enabled = !_owner.Device.IsStreaming;
             xb200FilterCombobox.Enabled = (_owner.Device.IsStreaming == false) && (xb200Checkbox.Checked);

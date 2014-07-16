@@ -217,9 +217,17 @@ namespace SDRSharp.BladeRF
                     uint tmp = 0;
                     if (_bandwidth == 0)
                         NativeMethods.bladerf_set_bandwidth(_dev, bladerf_module.BLADERF_MODULE_RX, (uint)(_sampleRate * 0.75), out tmp);
-
                 }
+                OnSampleRateChanged();
             }
+        }
+
+        public event EventHandler SampleRateChanged;
+
+        public void OnSampleRateChanged()
+        {
+            if (SampleRateChanged != null)
+                SampleRateChanged(this, EventArgs.Empty);
         }
 
         public int Bandwidth
