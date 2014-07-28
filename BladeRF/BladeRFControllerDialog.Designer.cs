@@ -58,10 +58,12 @@
             this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.bandwidthComboBox = new System.Windows.Forms.ComboBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)(this.rxVga2GainTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.rxVga1GainTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.lnaGainTrackBar)).BeginInit();
             this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // refreshTimer
@@ -72,7 +74,7 @@
             // closeButton
             // 
             this.closeButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.closeButton.Location = new System.Drawing.Point(182, 531);
+            this.closeButton.Location = new System.Drawing.Point(183, 517);
             this.closeButton.Name = "closeButton";
             this.closeButton.Size = new System.Drawing.Size(75, 23);
             this.closeButton.TabIndex = 8;
@@ -102,10 +104,10 @@
             // rxVga2GainTrackBar
             // 
             this.rxVga2GainTrackBar.LargeChange = 3;
-            this.rxVga2GainTrackBar.Location = new System.Drawing.Point(3, 284);
+            this.rxVga2GainTrackBar.Location = new System.Drawing.Point(14, 133);
             this.rxVga2GainTrackBar.Maximum = 30;
             this.rxVga2GainTrackBar.Name = "rxVga2GainTrackBar";
-            this.rxVga2GainTrackBar.Size = new System.Drawing.Size(267, 45);
+            this.rxVga2GainTrackBar.Size = new System.Drawing.Size(216, 45);
             this.rxVga2GainTrackBar.SmallChange = 3;
             this.rxVga2GainTrackBar.TabIndex = 6;
             this.rxVga2GainTrackBar.Value = 20;
@@ -114,7 +116,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 268);
+            this.label2.Location = new System.Drawing.Point(11, 117);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(73, 13);
             this.label2.TabIndex = 22;
@@ -123,7 +125,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 53);
+            this.label3.Location = new System.Drawing.Point(12, 107);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(68, 13);
             this.label3.TabIndex = 24;
@@ -133,15 +135,15 @@
             // 
             this.samplerateComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.samplerateComboBox.FormattingEnabled = true;
-            this.samplerateComboBox.Location = new System.Drawing.Point(12, 70);
+            this.samplerateComboBox.Location = new System.Drawing.Point(12, 124);
             this.samplerateComboBox.Name = "samplerateComboBox";
-            this.samplerateComboBox.Size = new System.Drawing.Size(247, 21);
+            this.samplerateComboBox.Size = new System.Drawing.Size(103, 21);
             this.samplerateComboBox.TabIndex = 1;
             this.samplerateComboBox.SelectedIndexChanged += new System.EventHandler(this.samplerateComboBox_SelectedIndexChanged);
             // 
             // rxVga2gainLabel
             // 
-            this.rxVga2gainLabel.Location = new System.Drawing.Point(191, 268);
+            this.rxVga2gainLabel.Location = new System.Drawing.Point(162, 119);
             this.rxVga2gainLabel.Name = "rxVga2gainLabel";
             this.rxVga2gainLabel.Size = new System.Drawing.Size(68, 13);
             this.rxVga2gainLabel.TabIndex = 26;
@@ -160,7 +162,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(12, 152);
+            this.label5.Location = new System.Drawing.Point(12, 57);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(80, 13);
             this.label5.TabIndex = 31;
@@ -174,7 +176,7 @@
             "Unknown",
             "Internal",
             "External"});
-            this.samplingModeComboBox.Location = new System.Drawing.Point(12, 169);
+            this.samplingModeComboBox.Location = new System.Drawing.Point(12, 74);
             this.samplingModeComboBox.Name = "samplingModeComboBox";
             this.samplingModeComboBox.Size = new System.Drawing.Size(247, 21);
             this.samplingModeComboBox.TabIndex = 2;
@@ -183,18 +185,18 @@
             // rxVga1GainTrackBar
             // 
             this.rxVga1GainTrackBar.LargeChange = 1;
-            this.rxVga1GainTrackBar.Location = new System.Drawing.Point(3, 220);
+            this.rxVga1GainTrackBar.Location = new System.Drawing.Point(14, 81);
             this.rxVga1GainTrackBar.Maximum = 30;
             this.rxVga1GainTrackBar.Minimum = 5;
             this.rxVga1GainTrackBar.Name = "rxVga1GainTrackBar";
-            this.rxVga1GainTrackBar.Size = new System.Drawing.Size(267, 45);
+            this.rxVga1GainTrackBar.Size = new System.Drawing.Size(216, 45);
             this.rxVga1GainTrackBar.TabIndex = 32;
             this.rxVga1GainTrackBar.Value = 20;
             this.rxVga1GainTrackBar.Scroll += new System.EventHandler(this.rxVga1GainTrackBar_Scroll);
             // 
             // rxVga1gainLabel
             // 
-            this.rxVga1gainLabel.Location = new System.Drawing.Point(190, 202);
+            this.rxVga1gainLabel.Location = new System.Drawing.Point(162, 65);
             this.rxVga1gainLabel.Name = "rxVga1gainLabel";
             this.rxVga1gainLabel.Size = new System.Drawing.Size(68, 13);
             this.rxVga1gainLabel.TabIndex = 34;
@@ -204,7 +206,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(12, 202);
+            this.label6.Location = new System.Drawing.Point(11, 65);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(73, 13);
             this.label6.TabIndex = 33;
@@ -212,7 +214,7 @@
             // 
             // lnaGainLabel
             // 
-            this.lnaGainLabel.Location = new System.Drawing.Point(191, 332);
+            this.lnaGainLabel.Location = new System.Drawing.Point(162, 15);
             this.lnaGainLabel.Name = "lnaGainLabel";
             this.lnaGainLabel.Size = new System.Drawing.Size(68, 13);
             this.lnaGainLabel.TabIndex = 37;
@@ -222,7 +224,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(12, 332);
+            this.label7.Location = new System.Drawing.Point(11, 15);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(53, 13);
             this.label7.TabIndex = 36;
@@ -231,11 +233,11 @@
             // lnaGainTrackBar
             // 
             this.lnaGainTrackBar.LargeChange = 1;
-            this.lnaGainTrackBar.Location = new System.Drawing.Point(3, 348);
+            this.lnaGainTrackBar.Location = new System.Drawing.Point(14, 31);
             this.lnaGainTrackBar.Maximum = 3;
             this.lnaGainTrackBar.Minimum = 1;
             this.lnaGainTrackBar.Name = "lnaGainTrackBar";
-            this.lnaGainTrackBar.Size = new System.Drawing.Size(267, 45);
+            this.lnaGainTrackBar.Size = new System.Drawing.Size(216, 45);
             this.lnaGainTrackBar.TabIndex = 35;
             this.lnaGainTrackBar.Value = 2;
             this.lnaGainTrackBar.Scroll += new System.EventHandler(this.lnaGainTrackBar_Scroll);
@@ -250,7 +252,7 @@
             // 
             // fpgaTextBox
             // 
-            this.fpgaTextBox.Location = new System.Drawing.Point(11, 495);
+            this.fpgaTextBox.Location = new System.Drawing.Point(11, 476);
             this.fpgaTextBox.Name = "fpgaTextBox";
             this.fpgaTextBox.ReadOnly = true;
             this.fpgaTextBox.Size = new System.Drawing.Size(160, 20);
@@ -258,7 +260,7 @@
             // 
             // fpgaButton
             // 
-            this.fpgaButton.Location = new System.Drawing.Point(183, 492);
+            this.fpgaButton.Location = new System.Drawing.Point(183, 474);
             this.fpgaButton.Name = "fpgaButton";
             this.fpgaButton.Size = new System.Drawing.Size(75, 23);
             this.fpgaButton.TabIndex = 39;
@@ -269,7 +271,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(11, 479);
+            this.label4.Location = new System.Drawing.Point(11, 455);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(54, 13);
             this.label4.TabIndex = 40;
@@ -277,7 +279,7 @@
             // 
             // labelVersion
             // 
-            this.labelVersion.Location = new System.Drawing.Point(8, 541);
+            this.labelVersion.Location = new System.Drawing.Point(8, 517);
             this.labelVersion.Name = "labelVersion";
             this.labelVersion.Size = new System.Drawing.Size(168, 23);
             this.labelVersion.TabIndex = 41;
@@ -309,7 +311,7 @@
             this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.xb200Checkbox);
             this.groupBox1.Controls.Add(this.xb200FilterCombobox);
-            this.groupBox1.Location = new System.Drawing.Point(12, 376);
+            this.groupBox1.Location = new System.Drawing.Point(12, 347);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(247, 100);
             this.groupBox1.TabIndex = 44;
@@ -328,7 +330,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(12, 102);
+            this.label9.Location = new System.Drawing.Point(131, 107);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(57, 13);
             this.label9.TabIndex = 46;
@@ -338,18 +340,37 @@
             // 
             this.bandwidthComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.bandwidthComboBox.FormattingEnabled = true;
-            this.bandwidthComboBox.Location = new System.Drawing.Point(12, 119);
+            this.bandwidthComboBox.Location = new System.Drawing.Point(134, 124);
             this.bandwidthComboBox.Name = "bandwidthComboBox";
-            this.bandwidthComboBox.Size = new System.Drawing.Size(247, 21);
+            this.bandwidthComboBox.Size = new System.Drawing.Size(125, 21);
             this.bandwidthComboBox.TabIndex = 45;
             this.bandwidthComboBox.SelectedIndexChanged += new System.EventHandler(this.bandwidthComboBox_SelectedIndexChanged);
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.label7);
+            this.groupBox2.Controls.Add(this.lnaGainLabel);
+            this.groupBox2.Controls.Add(this.label2);
+            this.groupBox2.Controls.Add(this.rxVga2gainLabel);
+            this.groupBox2.Controls.Add(this.label6);
+            this.groupBox2.Controls.Add(this.rxVga1gainLabel);
+            this.groupBox2.Controls.Add(this.lnaGainTrackBar);
+            this.groupBox2.Controls.Add(this.rxVga1GainTrackBar);
+            this.groupBox2.Controls.Add(this.rxVga2GainTrackBar);
+            this.groupBox2.Location = new System.Drawing.Point(12, 156);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(247, 185);
+            this.groupBox2.TabIndex = 47;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Gain controls";
             // 
             // BladeRFControllerDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.closeButton;
-            this.ClientSize = new System.Drawing.Size(272, 575);
+            this.ClientSize = new System.Drawing.Size(272, 552);
+            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.bandwidthComboBox);
             this.Controls.Add(this.groupBox1);
@@ -357,20 +378,11 @@
             this.Controls.Add(this.label4);
             this.Controls.Add(this.fpgaButton);
             this.Controls.Add(this.fpgaTextBox);
-            this.Controls.Add(this.lnaGainLabel);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.lnaGainTrackBar);
-            this.Controls.Add(this.rxVga1gainLabel);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.rxVga1GainTrackBar);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.samplingModeComboBox);
             this.Controls.Add(this.bladeRFTypeLabel);
-            this.Controls.Add(this.rxVga2gainLabel);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.samplerateComboBox);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.rxVga2GainTrackBar);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.deviceComboBox);
             this.Controls.Add(this.closeButton);
@@ -390,6 +402,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.lnaGainTrackBar)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -426,6 +440,7 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.ComboBox bandwidthComboBox;
+        private System.Windows.Forms.GroupBox groupBox2;
     }
 }
 
