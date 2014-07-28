@@ -13,9 +13,10 @@ namespace SDRSharp.BladeRF
         private const uint MaxFrequency = 3800000000;
         private const int MinBandwidth = 1500000;
         private const int MaxBandwidth = 28000000;
-        private const uint SampleTimeoutMs = 3000;
+        private const uint SampleTimeoutMs = 1000;
         private const uint NumBuffers = 32;
-
+        
+        private static object syncLock = new object();
         private string DeviceName = "BladeRF";
         private string _serial;
         private IntPtr _dev;
@@ -34,7 +35,7 @@ namespace SDRSharp.BladeRF
         private bool _isStreaming;
         private string _devSpec;
         private readonly SamplesAvailableEventArgs _eventArgs = new SamplesAvailableEventArgs();
-        private static readonly uint _readLength = (uint)Utils.GetIntSetting("BladeRFBufferLength", 16384);
+        private static uint _readLength = 16384;
         private Thread _sampleThread = null;
         private static bladerf_version _version = NativeMethods.bladerf_version();
         private static bool _xb200_enabled = Utils.GetBooleanSetting("BladeRFXB200Enabled");
@@ -214,6 +215,10 @@ namespace SDRSharp.BladeRF
                     double actual;
                     if (0 == NativeMethods.bladerf_set_sample_rate(_dev, bladerf_module.BLADERF_MODULE_RX, _sampleRate, out actual))
                         _sampleRate = actual;
+                    lock (syncLock)
+                    {
+                        _readLength = _sampleRate > 1000000 ? 16384U : 4096U;
+                    }
                     uint tmp = 0;
                     if (_bandwidth == 0)
                         NativeMethods.bladerf_set_bandwidth(_dev, bladerf_module.BLADERF_MODULE_RX, (uint)(_sampleRate * 0.75), out tmp);
@@ -373,40 +378,53 @@ namespace SDRSharp.BladeRF
 
         private unsafe void ReceiveSamples_sync()
         {
-            if (_iqBuffer == null || _iqBuffer.Length != _readLength)
+            while (_isStreaming)
             {
-                _iqBuffer = UnsafeBuffer.Create((int)_readLength, sizeof(Complex));
-                _iqPtr = (Complex*)_iqBuffer;
-            }
-            if (_samplesBuffer == null || _samplesBuffer.Length != (2 * _readLength))
-            {
-                _samplesBuffer = UnsafeBuffer.Create((int)(2 * _readLength), sizeof(Int16));
-                _samplesPtr = (Int16*)_samplesBuffer;
-            }
-            int status = 0;
-            while (status == 0 && this._isStreaming)
-            {
-                try
+                uint cur_len, new_len;
+                lock (syncLock)
                 {
-                    status = NativeMethods.bladerf_sync_rx(_dev, _samplesPtr, _readLength, IntPtr.Zero, SampleTimeoutMs);
-                    if (status != 0)
-                        throw new ApplicationException(String.Format("bladerf_rx() error. {0}", NativeMethods.bladerf_strerror(status)));
-                    var ptrIq = _iqPtr;
-                    var ptrSample = _samplesPtr;
-                    for (int i = 0; i < _readLength; i++)
-                    {
-                        ptrIq->Imag = _lutPtr[*ptrSample & 0x0fff];
-                        ptrSample++;
-                        ptrIq->Real = _lutPtr[*ptrSample & 0x0fff];
-                        ptrSample++;
-                        ptrIq++;
-                    }
-                    ComplexSamplesAvailable(_iqPtr, _iqBuffer.Length);
+                    cur_len = new_len = _readLength;
                 }
-                catch
+                if (_iqBuffer == null || _iqBuffer.Length != cur_len)
                 {
-                    _isStreaming = false;
-                    break;
+                    _iqBuffer = UnsafeBuffer.Create((int)cur_len, sizeof(Complex));
+                    _iqPtr = (Complex*)_iqBuffer;
+                }
+                if (_samplesBuffer == null || _samplesBuffer.Length != (2 * cur_len))
+                {
+                    _samplesBuffer = UnsafeBuffer.Create((int)(2 * cur_len), sizeof(Int16));
+                    _samplesPtr = (Int16*)_samplesBuffer;
+                }
+                if (NativeMethods.bladerf_sync_config(_dev, bladerf_module.BLADERF_MODULE_RX, bladerf_format.BLADERF_FORMAT_SC16_Q11, NumBuffers, cur_len, NumBuffers / 2, SampleTimeoutMs) != 0)
+                    return;
+                int status = 0;
+                while (status == 0 && cur_len == new_len)
+                {
+                    try
+                    {
+                        status = NativeMethods.bladerf_sync_rx(_dev, _samplesPtr, cur_len, IntPtr.Zero, SampleTimeoutMs);
+                        if (status != 0)
+                            throw new ApplicationException(String.Format("bladerf_rx() error. {0}", NativeMethods.bladerf_strerror(status)));
+                        var ptrIq = _iqPtr;
+                        var ptrSample = _samplesPtr;
+                        for (int i = 0; i < cur_len; i++)
+                        {
+                            ptrIq->Imag = _lutPtr[*ptrSample & 0x0fff];
+                            ptrSample++;
+                            ptrIq->Real = _lutPtr[*ptrSample & 0x0fff];
+                            ptrSample++;
+                            ptrIq++;
+                        }
+                        ComplexSamplesAvailable(_iqPtr, _iqBuffer.Length);
+                    }
+                    catch
+                    {
+                        break;
+                    }
+                    lock (syncLock)
+                    {
+                        new_len = _readLength;
+                    }
                 }
             }
         }
@@ -489,6 +507,10 @@ namespace SDRSharp.BladeRF
             if ((error = NativeMethods.bladerf_set_sample_rate(_dev, bladerf_module.BLADERF_MODULE_RX, _sampleRate, out actual)) != 0)
                 throw new ApplicationException(String.Format("bladerf_sample_set_sample_rate() error. {0}", NativeMethods.bladerf_strerror(error)));
             _sampleRate = actual;
+            lock (syncLock)
+            {
+                _readLength = _sampleRate > 1000000 ? 16384U : 4096U;
+            }
             uint tmp = 0;
             if (_bandwidth == 0)
             {
@@ -540,8 +562,6 @@ namespace SDRSharp.BladeRF
             else
             {
                 // new sync interface
-                if ((error = NativeMethods.bladerf_sync_config(_dev, bladerf_module.BLADERF_MODULE_RX, bladerf_format.BLADERF_FORMAT_SC16_Q11, NumBuffers, _readLength, NumBuffers / 2, SampleTimeoutMs)) != 0)
-                    throw new ApplicationException(String.Format("bladerf_sync_config() error. {0}", NativeMethods.bladerf_strerror(error)));
                 _sampleThread = new Thread(ReceiveSamples_sync);
                 _sampleThread.Name = "bladerf_samples_rx";
                 _sampleThread.Priority = ThreadPriority.Highest;
