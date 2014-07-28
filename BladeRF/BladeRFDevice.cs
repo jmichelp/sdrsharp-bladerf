@@ -378,6 +378,7 @@ namespace SDRSharp.BladeRF
 
         private unsafe void ReceiveSamples_sync()
         {
+            int status = 0;
             while (_isStreaming)
             {
                 uint cur_len, new_len;
@@ -395,9 +396,8 @@ namespace SDRSharp.BladeRF
                     _samplesBuffer = UnsafeBuffer.Create((int)(2 * cur_len), sizeof(Int16));
                     _samplesPtr = (Int16*)_samplesBuffer;
                 }
-                if (NativeMethods.bladerf_sync_config(_dev, bladerf_module.BLADERF_MODULE_RX, bladerf_format.BLADERF_FORMAT_SC16_Q11, NumBuffers, cur_len, NumBuffers / 2, SampleTimeoutMs) != 0)
-                    return;
-                int status = 0;
+                if ((status = NativeMethods.bladerf_sync_config(_dev, bladerf_module.BLADERF_MODULE_RX, bladerf_format.BLADERF_FORMAT_SC16_Q11, NumBuffers, cur_len, NumBuffers / 2, SampleTimeoutMs)) != 0)
+                    _isStreaming = false;
                 while (status == 0 && cur_len == new_len)
                 {
                     try
@@ -577,10 +577,10 @@ namespace SDRSharp.BladeRF
             if (_isStreaming)
             {
                 int error;
+                _isStreaming = false;
                 if ((error = NativeMethods.bladerf_enable_module(_dev, bladerf_module.BLADERF_MODULE_RX, 0)) != 0)
                     throw new ApplicationException(String.Format("Disabling RX module failed: {0}", NativeMethods.bladerf_strerror(error)));
             }
-            _isStreaming = false;
             
             if (_sampleThread != null)
             {
