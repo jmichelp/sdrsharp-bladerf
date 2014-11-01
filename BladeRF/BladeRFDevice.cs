@@ -312,7 +312,7 @@ namespace SDRSharp.BladeRF
             _isFpgaLoaded = false;
             string devspec = "";
             if (serial != "")
-                devspec = String.Format("libusb:serial={0}", serial);
+                devspec = String.Format("*:serial={0}", serial);
             var rv = NativeMethods.bladerf_open(out _dev, devspec);
             if (rv != 0)
                 throw new ApplicationException(String.Format("Cannot open BladeRF device. Is the device locked somewhere?. {0}", NativeMethods.bladerf_strerror(rv)));

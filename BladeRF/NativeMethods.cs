@@ -12,6 +12,7 @@ namespace SDRSharp.BladeRF
         BLADERF_BACKEND_ANY = 0,    /**< "Don't Care" -- use any available backend */
         BLADERF_BACKEND_LINUX = 1,  /**< Linux kernel driver */
         BLADERF_BACKEND_LIBUSB = 2, /**< libusb */
+        BLADERF_BACKEND_CYPRESS = 3, /**< CyAPI */
         BLADERF_BACKEND_DUMMY = 100, /**< Dummy used for development purposes */
     }
 
