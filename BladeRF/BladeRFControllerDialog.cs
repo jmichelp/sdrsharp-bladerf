@@ -311,6 +311,7 @@ namespace SDRSharp.BladeRF
         public string Serial { get; private set; }
         public int Bus { get; set; }
         public int Address { get; set; }
+        public string Backend { get; set; }
 
         public unsafe static DeviceDisplay[] GetActiveDevices()
         {
@@ -328,9 +329,10 @@ namespace SDRSharp.BladeRF
             {
                 int bus = (int)(devlist[i].usb_bus);
                 int address = (int)(devlist[i].usb_addr);
+                string backend = NativeMethods.backend_to_str(devlist[i].backend);
                 string serial = new String(devlist[i].serial, 0, 32, System.Text.Encoding.ASCII);
-                string name = String.Format("BladeRF SN#{0} ({1}:{2})", serial, bus, address);
-                result[i] = new DeviceDisplay { Index = i, Name = name, Serial = serial, Address = address, Bus = bus };
+                string name = String.Format("BladeRF ({0}) SN#{1}..{2} ({3}:{4})", backend, serial.Substring(0, 4), serial.Substring(27, 4), bus, address);
+                result[i] = new DeviceDisplay { Index = i, Name = name, Serial = serial, Address = address, Bus = bus, Backend = backend };
             }
             NativeMethods.bladerf_free_device_list(_tmp);
             return result;

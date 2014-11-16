@@ -401,6 +401,9 @@ namespace SDRSharp.BladeRF
         }
 
         [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        public static extern bladerf_dev_speed bladerf_device_speed(IntPtr dev);
+
+        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_expansion_attach(IntPtr dev, bladerf_xb xb);
 
         public static int bladerf_xb200_attach(IntPtr dev)
@@ -413,5 +416,37 @@ namespace SDRSharp.BladeRF
 
         [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
         public static extern void bladerf_log_set_verbosity(bladerf_log_level level);
+
+        public static string backend_to_str(bladerf_backend backend)
+        {
+            switch (backend)
+            {
+                case bladerf_backend.BLADERF_BACKEND_CYPRESS:
+                    return "CyUSB";
+                case bladerf_backend.BLADERF_BACKEND_DUMMY:
+                    return "Dummy";
+                case bladerf_backend.BLADERF_BACKEND_LIBUSB:
+                    return "libusb";
+                case bladerf_backend.BLADERF_BACKEND_LINUX:
+                    return "Linux";
+                case bladerf_backend.BLADERF_BACKEND_ANY:
+                    return "any";
+            }
+            return "Unknown";
+        }
+
+        public static string speed_to_str(bladerf_dev_speed speed)
+        {
+            switch (speed)
+            {
+                case bladerf_dev_speed.BLADERF_DEVICE_SPEED_HIGH:
+                    return "H";
+                case bladerf_dev_speed.BLADERF_DEVICE_SPEED_SUPER:
+                    return "S";
+                case bladerf_dev_speed.BLADERF_DEVICE_SPEED_UNKNOWN:
+                    return "?";
+            }
+            return "-";
+        }
     }
 }
