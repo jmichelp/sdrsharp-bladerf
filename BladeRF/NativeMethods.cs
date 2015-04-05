@@ -37,7 +37,8 @@ namespace SDRSharp.BladeRF
         BLADERF_ERR_CHECKSUM = -10, /**< Invalid checksum */
         BLADERF_ERR_NO_FILE = -11, /**< File not found */
         BLADERF_ERR_UPDATE_FPGA = -12, /**< An FPGA update is required */
-        BLADERF_ERR_UPDATE_FW = -13 /**< A firmware update is requied */
+        BLADERF_ERR_UPDATE_FW = -13, /**< A firmware update is requied */
+        BLADERF_ERR_TIME_PAST = -14 /**< Requested timestamp is in the past */
     }
 
     public enum bladerf_module
@@ -162,6 +163,7 @@ namespace SDRSharp.BladeRF
     public enum bladerf_format
     {
         BLADERF_FORMAT_SC16_Q11 = 0, /**< Signed, Complex 16-bit Q11.*/
+        BLADERF_FORMAT_SC16_Q11_META = 1
     }
 
     public enum bladerf_xb
@@ -191,6 +193,12 @@ namespace SDRSharp.BladeRF
         BLADERF_LOG_LEVEL_ERROR = 4,    /**< Error level logging */
         BLADERF_LOG_LEVEL_CRITICAL = 5, /**< Fatal error level logging */
         BLADERF_LOG_LEVEL_SILENT = 6    /**< No output */
+    }
+
+    public enum bladerf_xb200_path
+    {
+        BLADERF_XB200_BYPASS = 0, /**< Bypass the XB-200 mixer */
+        BLADERF_XB200_MIX = 1 /**< Pass signals through the XB-200 mixer */
     }
     #endregion
 

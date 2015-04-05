@@ -24,6 +24,7 @@ namespace SDRSharp.BladeRF
         private double _sampleRate = DefaultSamplerate;
         private int _bandwidth;
         private bool _isFpgaLoaded = false;
+        private bool _RXConfigured = false;
         private string _fpga_path = Utils.GetStringSetting("BladeRFFPGA", "");
         private bladerf_lna_gain _lnaGain = (bladerf_lna_gain)Utils.GetIntSetting("BladeRFLNAGain", (int) bladerf_lna_gain.BLADERF_LNA_GAIN_MID);
         private int _vga1Gain = Utils.GetIntSetting("BladeRFRXVGA1Gain", 20);
@@ -398,6 +399,10 @@ namespace SDRSharp.BladeRF
                 }
                 if ((status = NativeMethods.bladerf_sync_config(_dev, bladerf_module.BLADERF_MODULE_RX, bladerf_format.BLADERF_FORMAT_SC16_Q11, NumBuffers, cur_len, NumBuffers / 2, SampleTimeoutMs)) != 0)
                     _isStreaming = false;
+                lock(syncLock)
+                {
+                    _RXConfigured = true;
+                }
                 while (status == 0 && cur_len == new_len)
                 {
                     try
@@ -567,6 +572,14 @@ namespace SDRSharp.BladeRF
                 _sampleThread.Priority = ThreadPriority.Highest;
                 _isStreaming = true;
                 _sampleThread.Start();
+                bool ready = false;
+                while (!ready)
+                {
+                    lock (syncLock)
+                    {
+                        ready = _RXConfigured;
+                    }
+                }
                 if ((error = NativeMethods.bladerf_enable_module(_dev, bladerf_module.BLADERF_MODULE_RX, 1)) != 0)
                     throw new ApplicationException(String.Format("bladerf_enable_module() error. {0}", NativeMethods.bladerf_strerror(error)));
             }
