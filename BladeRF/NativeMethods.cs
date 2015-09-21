@@ -38,7 +38,10 @@ namespace SDRSharp.BladeRF
         BLADERF_ERR_NO_FILE = -11, /**< File not found */
         BLADERF_ERR_UPDATE_FPGA = -12, /**< An FPGA update is required */
         BLADERF_ERR_UPDATE_FW = -13, /**< A firmware update is requied */
-        BLADERF_ERR_TIME_PAST = -14 /**< Requested timestamp is in the past */
+        BLADERF_ERR_TIME_PAST = -14, /**< Requested timestamp is in the past */
+        BLADERF_ERR_QUEUE_FULL = -15, /**< Could not enqueue data into full queue */
+        BLADERF_ERR_FPGA_OP = -16, /**< An FPGA operation reported failure */
+        BLADERF_ERR_PERMISSION = -17 /**< Insufficient permissions for the requested operation */
     }
 
     public enum bladerf_module
@@ -209,8 +212,11 @@ namespace SDRSharp.BladeRF
         public UInt16 major;
         public UInt16 minor;
         public UInt16 patch;
-        [MarshalAs(UnmanagedType.LPStr)]
-        public string describe;
+        private IntPtr describePtr;
+        public string describe
+        {
+            get { return Marshal.PtrToStringAnsi(describePtr); }
+        }
     }
     
     [StructLayout(LayoutKind.Sequential)]

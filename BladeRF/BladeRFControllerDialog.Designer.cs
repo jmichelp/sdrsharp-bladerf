@@ -174,8 +174,8 @@
             this.samplingModeComboBox.FormattingEnabled = true;
             this.samplingModeComboBox.Items.AddRange(new object[] {
             "Unknown",
-            "Internal",
-            "External"});
+            "RX/TX SMA",
+            "J60/J61 connectors"});
             this.samplingModeComboBox.Location = new System.Drawing.Point(12, 74);
             this.samplingModeComboBox.Name = "samplingModeComboBox";
             this.samplingModeComboBox.Size = new System.Drawing.Size(247, 21);

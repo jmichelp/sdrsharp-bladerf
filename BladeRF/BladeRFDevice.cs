@@ -9,7 +9,7 @@ namespace SDRSharp.BladeRF
     {
         private const uint DefaultFrequency = 405500000U;
         private const int DefaultSamplerate = 4000000;
-        private const uint MinFrequency = 232500000;
+        private const uint MinFrequency = 237500000;
         private const uint MaxFrequency = 3800000000;
         private const int MinBandwidth = 1500000;
         private const int MaxBandwidth = 28000000;
