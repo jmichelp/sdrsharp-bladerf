@@ -209,6 +209,7 @@ namespace SDRSharp.BladeRF
         public UInt16 major;
         public UInt16 minor;
         public UInt16 patch;
+        [MarshalAs(UnmanagedType.LPStr)]
         public string describe;
     }
     

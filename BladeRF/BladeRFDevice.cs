@@ -216,15 +216,25 @@ namespace SDRSharp.BladeRF
                     double actual;
                     if (0 == NativeMethods.bladerf_set_sample_rate(_dev, bladerf_module.BLADERF_MODULE_RX, _sampleRate, out actual))
                         _sampleRate = actual;
-                    lock (syncLock)
-                    {
-                        _readLength = _sampleRate > 1000000 ? 16384U : 4096U;
-                    }
+                    adjustReadLength();
                     uint tmp = 0;
                     if (_bandwidth == 0)
                         NativeMethods.bladerf_set_bandwidth(_dev, bladerf_module.BLADERF_MODULE_RX, (uint)(_sampleRate * 0.75), out tmp);
                 }
                 OnSampleRateChanged();
+            }
+        }
+
+        private void adjustReadLength()
+        {
+            lock (syncLock)
+            {
+                if (_sampleRate <= 1000000)
+                    _readLength = 4096U;
+                else if (_sampleRate <= 10000000)
+                    _readLength = 16384U;
+                else
+                    _readLength = 32768U;
             }
         }
 
@@ -512,10 +522,7 @@ namespace SDRSharp.BladeRF
             if ((error = NativeMethods.bladerf_set_sample_rate(_dev, bladerf_module.BLADERF_MODULE_RX, _sampleRate, out actual)) != 0)
                 throw new ApplicationException(String.Format("bladerf_sample_set_sample_rate() error. {0}", NativeMethods.bladerf_strerror(error)));
             _sampleRate = actual;
-            lock (syncLock)
-            {
-                _readLength = _sampleRate > 1000000 ? 16384U : 4096U;
-            }
+            adjustReadLength();
             uint tmp = 0;
             if (_bandwidth == 0)
             {
