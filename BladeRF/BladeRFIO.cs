@@ -7,7 +7,7 @@ using SDRSharp.Radio;
 
 namespace SDRSharp.BladeRF
 {
-    public class BladeRFIO : IFrontendController, IDisposable, ISampleRateChangeSource
+    public class BladeRFIO : IFrontendController, IIQStreamController, IDisposable, ISampleRateChangeSource , SDRSharp.Radio.IFloatingConfigDialogProvider
     {
         private const string _displayName = "BladeRF";
         private readonly BladeRFControllerDialog _gui;
