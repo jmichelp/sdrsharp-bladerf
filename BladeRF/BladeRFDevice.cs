@@ -424,9 +424,9 @@ namespace SDRSharp.BladeRF
                         var ptrSample = _samplesPtr;
                         for (int i = 0; i < cur_len; i++)
                         {
-                            ptrIq->Imag = _lutPtr[*ptrSample & 0x0fff];
-                            ptrSample++;
                             ptrIq->Real = _lutPtr[*ptrSample & 0x0fff];
+                            ptrSample++;
+                            ptrIq->Imag = _lutPtr[*ptrSample & 0x0fff];
                             ptrSample++;
                             ptrIq++;
                         }
