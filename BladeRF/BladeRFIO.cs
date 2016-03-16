@@ -7,7 +7,7 @@ using SDRSharp.Radio;
 
 namespace SDRSharp.BladeRF
 {
-       public class BladeRFIO : IFrontendController, IIQStreamController, IDisposable, ISampleRateChangeSource , IFloatingConfigDialogProvider, ITunableSource
+       public class BladeRFIO : IFrontendController, IIQStreamController, IDisposable, ISampleRateChangeSource , IFloatingConfigDialogProvider, ITunableSource, IControlAwareObject, ISpectrumProvider
     {
         private const string _displayName = "BladeRF";
         private readonly BladeRFControllerDialog _gui;
@@ -187,6 +187,20 @@ namespace SDRSharp.BladeRF
         private unsafe void BladeRFDevice_SamplesAvailable(object sender, SamplesAvailableEventArgs e)
         {
           _callback(this, e.Buffer, e.Length);
+        }
+
+        public float UsableSpectrumRatio
+        {
+            get
+            {
+                // TODO: should I set it to 0.8f instead?
+                return 1.0f;
+            }
+        }
+
+        public void SetControl(object control)
+        {
+            this._gui.Control = (ISharpControl) control;
         }
     }
 }

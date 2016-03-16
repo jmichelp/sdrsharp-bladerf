@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Forms;
+using SDRSharp.Common;
 using SDRSharp.Radio;
 
 namespace SDRSharp.BladeRF
@@ -301,6 +302,12 @@ namespace SDRSharp.BladeRF
             {
                 return Text;
             }
+        }
+
+        public ISharpControl Control
+        {
+            get;
+            set;
         }
     }
 
