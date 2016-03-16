@@ -5,3 +5,4 @@ Release/SDRSharp.Radio.dll
 Release/*.xml
 Release/SDRSharp.BladeRF.dll.*
 *.suo
+*.user
