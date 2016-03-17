@@ -1,4 +1,5 @@
 BladeRF/obj/*
+BladeRF/bin/*
 Debug/*
 Release/SDRSharp.Common.dll
 Release/SDRSharp.Radio.dll
