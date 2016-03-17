@@ -44,6 +44,14 @@ namespace SDRSharp.BladeRF
             _initialized = true;
         }
 
+        private bool Initialized
+        {
+            get
+            {
+                return _initialized && _owner.Device != null;
+            }
+        }
+
         private void InitSampleRates()
         {
             for (int i = 40; i > 0; i--)
@@ -106,10 +114,10 @@ namespace SDRSharp.BladeRF
             refreshTimer.Enabled = Visible;
             if (Visible)
             {
-                deviceComboBox.Enabled = !_owner.Device.IsStreaming;
-                xb200Checkbox.Enabled = !_owner.Device.IsStreaming;
+                deviceComboBox.Enabled = Initialized && !_owner.Device.IsStreaming;
+                xb200Checkbox.Enabled = Initialized && !_owner.Device.IsStreaming;
 
-                if (!_owner.Device.IsStreaming)
+                if (Initialized && !_owner.Device.IsStreaming)
                 {
                     var devices = DeviceDisplay.GetActiveDevices();
                     deviceComboBox.Items.Clear();
@@ -134,13 +142,13 @@ namespace SDRSharp.BladeRF
 
         private void refreshTimer_Tick(object sender, EventArgs e)
         {
-            deviceComboBox.Enabled = !_owner.Device.IsStreaming;
-            xb200Checkbox.Enabled = !_owner.Device.IsStreaming;
+            deviceComboBox.Enabled = Initialized && !_owner.Device.IsStreaming;
+            xb200Checkbox.Enabled = Initialized && !_owner.Device.IsStreaming;
         }
 
         private void deviceComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (!_initialized)
+            if (!Initialized)
             {
                 return;
             }
@@ -161,7 +169,7 @@ namespace SDRSharp.BladeRF
 
         private void samplerateComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (!_initialized)
+            if (!Initialized)
             {
                 return;
             }
@@ -173,7 +181,7 @@ namespace SDRSharp.BladeRF
 
         private void samplingModeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (!_initialized)
+            if (!Initialized)
             {
                 return;
             }
@@ -183,6 +191,9 @@ namespace SDRSharp.BladeRF
 
         public void ConfigureGUI()
         {
+            if (!Initialized)
+                return;
+
             bladeRFTypeLabel.Text = _owner.Device.Name;
 
             for (var i = 0; i < deviceComboBox.Items.Count; i++)
@@ -210,7 +221,7 @@ namespace SDRSharp.BladeRF
 
         private void rxVga1GainTrackBar_Scroll(object sender, EventArgs e)
         {
-            if (!_initialized)
+            if (!Initialized)
             {
                 return;
             }
@@ -221,7 +232,7 @@ namespace SDRSharp.BladeRF
 
         private void rxVga2GainTrackBar_Scroll(object sender, EventArgs e)
         {
-            if (!_initialized)
+            if (!Initialized)
             {
                 return;
             }
@@ -232,7 +243,7 @@ namespace SDRSharp.BladeRF
 
         private void lnaGainTrackBar_Scroll(object sender, EventArgs e)
         {
-            if (!_initialized)
+            if (!Initialized)
             {
                 return;
             }
@@ -243,7 +254,7 @@ namespace SDRSharp.BladeRF
 
         private void fpgaButton_Click(object sender, EventArgs e)
         {
-            if (!_initialized)
+            if (!Initialized)
             {
                 return;
             }
@@ -257,7 +268,7 @@ namespace SDRSharp.BladeRF
 
         private void xb200Checkbox_CheckedChanged(object sender, EventArgs e)
         {
-            if (!_initialized)
+            if (!Initialized)
                 return;
             xb200FilterCombobox.Enabled = xb200Checkbox.Checked;
             Utils.SaveSetting("BladeRFXB200Enabled", xb200Checkbox.Checked);
@@ -266,7 +277,7 @@ namespace SDRSharp.BladeRF
 
         private void xb200FilterCombobox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (!_initialized)
+            if (!Initialized)
                 return;
             Utils.SaveSetting("BladeRFXB200Filter", xb200FilterCombobox.SelectedIndex);
             _owner.Device.XB200Filter = xb200FilterCombobox.SelectedIndex;
@@ -274,7 +285,7 @@ namespace SDRSharp.BladeRF
 
         private void bandwidthComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (!_initialized)
+            if (!Initialized)
                 return;
             Utils.SaveSetting("BladeRFBandwidth", bandwidthComboBox.SelectedIndex);
             try

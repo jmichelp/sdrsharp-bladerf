@@ -111,7 +111,10 @@ namespace SDRSharp.BladeRF
 
         public void Stop()
         {
-            _bladeRFDevice.Stop();
+            if (_bladeRFDevice != null)
+            {
+                _bladeRFDevice.Stop();
+            }
         }
 
         public bool IsSoundCardBased
