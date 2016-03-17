@@ -249,9 +249,9 @@ namespace SDRSharp.BladeRF
 
     class NativeMethods
     {
-        private const string LibBladeRF = "bladerf";
+        private const string LibBladeRF = "bladeRF";
 
-        [DllImport("bladerf", EntryPoint = "bladerf_version", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", EntryPoint = "bladerf_version", CallingConvention = CallingConvention.Cdecl)]
         public static extern void bladerf_version_native(ref bladerf_version version);
 
         public static bladerf_version bladerf_version()
@@ -261,7 +261,7 @@ namespace SDRSharp.BladeRF
             return ret;
         }
 
-        [DllImport("bladerf", EntryPoint = "bladerf_fpga_version", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", EntryPoint = "bladerf_fpga_version", CallingConvention = CallingConvention.Cdecl)]
         public static extern void bladerf_fpga_version_native(IntPtr dev, ref bladerf_version version);
 
         public static bladerf_version bladerf_fpga_version(IntPtr dev)
@@ -271,25 +271,25 @@ namespace SDRSharp.BladeRF
             return ret;
         }
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_calibrate_dc(IntPtr dev, bladerf_cal_module module);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static unsafe extern int bladerf_init_stream(ref IntPtr stream, IntPtr dev, bladerf_stream_cb callback, out IntPtr buffers, uint num_buffers, bladerf_format format, uint num_samples, uint num_transfers, IntPtr user_data);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_stream(IntPtr stream, bladerf_module module);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern void bladerf_deinit_stream(IntPtr stream);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_sync_config(IntPtr dev, bladerf_module module, bladerf_format format, uint num_buffers, uint buffer_size, uint num_transfers, uint stream_timeout);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static unsafe extern int bladerf_sync_rx(IntPtr dev, Int16* samples, uint num_samples, IntPtr metadata, uint timeout_ms);
 
-        [DllImport("bladerf", EntryPoint = "bladerf_rx", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", EntryPoint = "bladerf_rx", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_rx_native(IntPtr dev, bladerf_format format, ref Int16[] samples, uint num_samples, ref bladerf_metadata metadata);
 
         public static int bladerf_rx(IntPtr dev, ref Int16[] samples, uint num_samples, uint timeout_ms)
@@ -298,25 +298,25 @@ namespace SDRSharp.BladeRF
             return bladerf_rx_native(dev, bladerf_format.BLADERF_FORMAT_SC16_Q11, ref samples, num_samples, ref meta);
         }
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_get_device_list(out IntPtr devices);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern void bladerf_free_device_list(IntPtr devices);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         public static extern int bladerf_open(out IntPtr device, string device_identifier);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern void bladerf_close(IntPtr device);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_enable_module(IntPtr dev, bladerf_module m, int enable);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_set_loopback(IntPtr dev, bladerf_loopback l);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern unsafe int bladerf_get_loopback(IntPtr dev, out bladerf_loopback l);
 
         public static int bladerf_set_sample_rate(IntPtr dev, bladerf_module module, double rate, out double actual)
@@ -335,76 +335,76 @@ namespace SDRSharp.BladeRF
             return ret;
         }
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern unsafe int bladerf_set_rational_sample_rate(IntPtr dev, bladerf_module module, ref bladerf_rational_rate rate, out bladerf_rational_rate actual);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_set_sampling(IntPtr dev, bladerf_sampling sampling);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern unsafe int bladerf_get_sampling(IntPtr dev, out bladerf_sampling sampling);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_get_sample_rate(IntPtr dev, bladerf_module module, out uint rate);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern unsafe int bladerf_get_rational_sample_rate(IntPtr dev, bladerf_module module, out bladerf_rational_rate rate);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_set_correction(IntPtr dev, bladerf_module module, bladerf_correction corr, Int16 value);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_get_correction(IntPtr dev, bladerf_module module, bladerf_correction corr, out Int16 value);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_set_lna_gain(IntPtr dev, bladerf_lna_gain gain);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_get_lna_gain(IntPtr dev, out bladerf_lna_gain gain);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_set_rxvga1(IntPtr dev, int gain);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_get_rxvga1(IntPtr dev, out int gain);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_set_rxvga2(IntPtr dev, int gain);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_get_rxvga2(IntPtr dev, out int gain);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_set_bandwidth(IntPtr dev, bladerf_module module, uint bandwidth, out uint actual);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_get_bandwidth(IntPtr dev, bladerf_module module, out uint bandwidth);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_set_lpf_mode(IntPtr dev, bladerf_module module, bladerf_lpf_mode mode);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_get_lpf_mode(IntPtr dev, bladerf_module module, out bladerf_lpf_mode mode);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_select_band(IntPtr dev, bladerf_module module, uint frequency);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_set_frequency(IntPtr dev, bladerf_module module, uint frequency);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_get_frequency(IntPtr dev, bladerf_module module, out uint frequency);
 
-        [DllImport("bladerf", EntryPoint = "bladerf_get_serial", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        [DllImport("bladeRF", EntryPoint = "bladerf_get_serial", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         public static extern int bladerf_get_serial(IntPtr dev, out string serial);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         public static extern int bladerf_load_fpga(IntPtr dev, string fpga);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_is_fpga_configured(IntPtr dev);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl, EntryPoint = "bladerf_strerror")]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl, EntryPoint = "bladerf_strerror")]
         public static extern IntPtr bladerf_strerror_native(int error);
 
         public static string bladerf_strerror(int error)
@@ -415,10 +415,10 @@ namespace SDRSharp.BladeRF
             return String.Empty;
         }
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern bladerf_dev_speed bladerf_device_speed(IntPtr dev);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_expansion_attach(IntPtr dev, bladerf_xb xb);
 
         public static int bladerf_xb200_attach(IntPtr dev)
@@ -426,10 +426,10 @@ namespace SDRSharp.BladeRF
             return bladerf_expansion_attach(dev, bladerf_xb.BLADERF_XB_200);
         }
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_xb200_set_filterbank(IntPtr dev, bladerf_module mod, bladerf_xb200_filter filter);
 
-        [DllImport("bladerf", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern void bladerf_log_set_verbosity(bladerf_log_level level);
 
         public static string backend_to_str(bladerf_backend backend)
