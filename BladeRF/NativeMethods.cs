@@ -41,7 +41,12 @@ namespace SDRSharp.BladeRF
         BLADERF_ERR_TIME_PAST = -14, /**< Requested timestamp is in the past */
         BLADERF_ERR_QUEUE_FULL = -15, /**< Could not enqueue data into full queue */
         BLADERF_ERR_FPGA_OP = -16, /**< An FPGA operation reported failure */
-        BLADERF_ERR_PERMISSION = -17 /**< Insufficient permissions for the requested operation */
+        BLADERF_ERR_PERMISSION = -17, /**< Insufficient permissions for the requested operation */
+        BLADERF_ERR_WOULD_BLOCK = -18 /**< Operation would block, but has been
+                                       *   requested to be non-blocking. This
+                                       *   indicates to a caller that it may
+                                       *   need to retry the operation later.
+                                       */
     }
 
     public enum bladerf_module
@@ -173,7 +178,8 @@ namespace SDRSharp.BladeRF
     {
         BLADERF_XB_NONE = 0,
         BLADERF_XB_100 = 1,
-        BLADERF_XB_200 = 2
+        BLADERF_XB_200 = 2,
+        BLADERF_XB_300 = 3
     }
 
     public enum bladerf_xb200_filter
@@ -203,6 +209,156 @@ namespace SDRSharp.BladeRF
         BLADERF_XB200_BYPASS = 0, /**< Bypass the XB-200 mixer */
         BLADERF_XB200_MIX = 1 /**< Pass signals through the XB-200 mixer */
     }
+
+    public enum bladerf_rx_mux
+    {
+        /**
+         * Invalid RX Mux mode selection
+         */
+        BLADERF_RX_MUX_INVALID = -1,
+
+        /**
+         * Read baseband samples from the LMS6002D. This is the default mode
+         * of operation.
+         */
+        BLADERF_RX_MUX_BASEBAND_LMS = 0,
+
+        /**
+         * Read samples from 12 bit counters.
+         *
+         * The I channel counts up while the Q channel counts down.
+         */
+        BLADERF_RX_MUX_12BIT_COUNTER = 1,
+
+        /**
+         * Read samples from a 32 bit up-counter.
+         *
+         * I and Q form a little-endian value.
+         */
+        BLADERF_RX_MUX_32BIT_COUNTER = 2,
+
+        /* RX_MUX setting 0x3 is reserved for future use */
+
+        /**
+         * Read samples from the baseband TX input to the FPGA (from the host)
+         */
+        BLADERF_RX_MUX_DIGITAL_LOOPBACK = 4
+    }
+
+    public enum bladerf_xb300_trx
+    {
+        BLADERF_XB300_TRX_INVAL = -1,  /**< Invalid TRX selection */
+        BLADERF_XB300_TRX_TX = 0,      /**< TRX antenna operates as TX */
+        BLADERF_XB300_TRX_RX = 1,      /**< TRX antenna operates as RX */
+        BLADERF_XB300_TRX_UNSET = 2    /**< TRX antenna unset */
+    }
+
+    public enum bladerf_xb300_amplifier
+    {
+        BLADERF_XB300_AMP_INVAL = -1,   /**< Invalid amplifier selection */
+        BLADERF_XB300_AMP_PA = 0,       /**< TX Power amplifier */
+        BLADERF_XB300_AMP_LNA = 1,      /**< RX LNA */
+        BLADERF_XB300_AMP_PA_AUX = 2    /**< Auxillary Power amplifier */
+    }
+
+    public enum bladerf_vctcxo_tamer_mode
+    {
+        /** Denotes an invalid selection or state */
+        BLADERF_VCTCXO_TAMER_INVALID = -1,
+
+        /** Do not attempt to tame the VCTCXO with an input source. */
+        BLADERF_VCTCXO_TAMER_DISABLED = 0,
+
+        /** Use a 1 pps input source to tame the VCTCXO. */
+        BLADERF_VCTCXO_TAMER_1_PPS = 1,
+
+        /** Use a 10 MHz input source to tame the VCTCXO. */
+        BLADERF_VCTCXO_TAMER_10_MHZ = 2
+    }
+
+    public enum bladerf_gpio
+    {
+        BLADERF_XB_GPIO_01 = 0x00000001,
+        BLADERF_XB_GPIO_02 = 0x00000002,
+        BLADERF_XB_GPIO_03 = 0x00000004,
+        BLADERF_XB_GPIO_04 = 0x00000008,
+        BLADERF_XB_GPIO_05 = 0x00000010,
+        BLADERF_XB_GPIO_06 = 0x00000020,
+        BLADERF_XB_GPIO_07 = 0x00000040,
+        BLADERF_XB_GPIO_08 = 0x00000080,
+        BLADERF_XB_GPIO_09 = 0x00000100,
+        BLADERF_XB_GPIO_10 = 0x00000200,
+        BLADERF_XB_GPIO_11 = 0x00000400,
+        BLADERF_XB_GPIO_12 = 0x00000800,
+        BLADERF_XB_GPIO_13 = 0x00001000,
+        BLADERF_XB_GPIO_14 = 0x00002000,
+        BLADERF_XB_GPIO_15 = 0x00004000,
+        BLADERF_XB_GPIO_16 = 0x00008000,
+        BLADERF_XB_GPIO_17 = 0x00010000,
+        BLADERF_XB_GPIO_18 = 0x00020000,
+        BLADERF_XB_GPIO_19 = 0x00040000,
+        BLADERF_XB_GPIO_20 = 0x00080000,
+        BLADERF_XB_GPIO_21 = 0x00100000,
+        BLADERF_XB_GPIO_22 = 0x00200000,
+        BLADERF_XB_GPIO_23 = 0x00400000,
+        BLADERF_XB_GPIO_24 = 0x00800000,
+        BLADERF_XB_GPIO_25 = 0x01000000,
+        BLADERF_XB_GPIO_26 = 0x02000000,
+        BLADERF_XB_GPIO_27 = 0x04000000,
+        BLADERF_XB_GPIO_28 = 0x08000000,
+        BLADERF_XB_GPIO_29 = 0x10000000,
+        BLADERF_XB_GPIO_30 = 0x20000000,
+        BLADERF_XB_GPIO_31 = 0x40000000,
+        BLADERF_XB_GPIO_32 = 0x80000000,
+
+        /* XB-200 GPIO */
+        BLADERF_XB200_PIN_J7_1 = BLADERF_XB_GPIO_10,
+        BLADERF_XB200_PIN_J7_2 = BLADERF_XB_GPIO_11,
+        BLADERF_XB200_PIN_J7_5 = BLADERF_XB_GPIO_08,
+        BLADERF_XB200_PIN_J7_6 = BLADERF_XB_GPIO_09,
+        BLADERF_XB200_PIN_J13_1 = BLADERF_XB_GPIO_17,
+        BLADERF_XB200_PIN_J13_2 = BLADERF_XB_GPIO_18,
+        BLADERF_XB200_PIN_J16_1 = BLADERF_XB_GPIO_31,
+        BLADERF_XB200_PIN_J16_2 = BLADERF_XB_GPIO_32,
+        BLADERF_XB200_PIN_J16_3 = BLADERF_XB_GPIO_19,
+        BLADERF_XB200_PIN_J16_4 = BLADERF_XB_GPIO_20,
+        BLADERF_XB200_PIN_J16_5 = BLADERF_XB_GPIO_21,
+        BLADERF_XB200_PIN_J16_6 = BLADERF_XB_GPIO_24,
+
+        /* XB-100 GPIO */
+        BLADERF_XB100_PIN_J2_3 = BLADERF_XB_GPIO_07,
+        BLADERF_XB100_PIN_J2_4 = BLADERF_XB_GPIO_08,
+        BLADERF_XB100_PIN_J3_3 = BLADERF_XB_GPIO_09,
+        BLADERF_XB100_PIN_J3_4 = BLADERF_XB_GPIO_10,
+        BLADERF_XB100_PIN_J4_3 = BLADERF_XB_GPIO_11,
+        BLADERF_XB100_PIN_J4_4 = BLADERF_XB_GPIO_12,
+        BLADERF_XB100_PIN_J5_3 = BLADERF_XB_GPIO_13,
+        BLADERF_XB100_PIN_J5_4 = BLADERF_XB_GPIO_14,
+        BLADERF_XB100_PIN_J11_2 = BLADERF_XB_GPIO_05,
+        BLADERF_XB100_PIN_J11_3 = BLADERF_XB_GPIO_04,
+        BLADERF_XB100_PIN_J11_4 = BLADERF_XB_GPIO_03,
+        BLADERF_XB100_PIN_J11_5 = BLADERF_XB_GPIO_06,
+        BLADERF_XB100_PIN_J12_2 = BLADERF_XB_GPIO_01,
+        BLADERF_XB100_PIN_J12_5 = BLADERF_XB_GPIO_02,
+        BLADERF_XB100_LED_D1 = BLADERF_XB_GPIO_24,
+        BLADERF_XB100_LED_D2 = BLADERF_XB_GPIO_32,
+        BLADERF_XB100_LED_D3 = BLADERF_XB_GPIO_30,
+        BLADERF_XB100_LED_D4 = BLADERF_XB_GPIO_28,
+        BLADERF_XB100_LED_D5 = BLADERF_XB_GPIO_23,
+        BLADERF_XB100_LED_D6 = BLADERF_XB_GPIO_25,
+        BLADERF_XB100_LED_D7 = BLADERF_XB_GPIO_31,
+        BLADERF_XB100_LED_D8 = BLADERF_XB_GPIO_29,
+        BLADERF_XB100_TLED_RED = BLADERF_XB_GPIO_22,
+        BLADERF_XB100_TLED_GREEN = BLADERF_XB_GPIO_21,
+        BLADERF_XB100_TLED_BLUE = BLADERF_XB_GPIO_20,
+        BLADERF_XB100_DIP_SW1 = BLADERF_XB_GPIO_27,
+        BLADERF_XB100_DIP_SW2 = BLADERF_XB_GPIO_26,
+        BLADERF_XB100_DIP_SW3 = BLADERF_XB_GPIO_16,
+        BLADERF_XB100_DIP_SW4 = BLADERF_XB_GPIO_15,
+        BLADERF_XB100_BTN_J6 = BLADERF_XB_GPIO_19,
+        BLADERF_XB100_BTN_J7 = BLADERF_XB_GPIO_18,
+        BLADERF_XB100_BTN_J8 = BLADERF_XB_GPIO_17
+    }
     #endregion
 
     #region Internal structs
@@ -218,13 +374,25 @@ namespace SDRSharp.BladeRF
             get { return Marshal.PtrToStringAnsi(describePtr); }
         }
     }
-    
+
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct bladerf_quick_tune
+    {
+        byte freqsel;   /**< Choice of VCO and VCO division factor */
+        byte vcocap;    /**< VCOCAP value */
+        UInt16 nint;    /**< Integer portion of LO frequency value */
+        UInt32 nfrac;   /**< Fractional portion of LO frequency value */
+        byte flags;     /**< Flag bits used internally by libbladeRF */
+    }
+
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct bladerf_metadata
     {
         public UInt64 timestamp;
         public UInt32 flags;
         public UInt32 status;
+        public UInt32 actual_count;
+        public fixed byte reserved[32];
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
@@ -260,6 +428,40 @@ namespace SDRSharp.BladeRF
             bladerf_version_native(ref ret);
             return ret;
         }
+
+        [DllImport("bladeRF", EntryPoint = "bladerf_fw_version", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int bladerf_fw_version_native(IntPtr dev, ref bladerf_version version);
+
+        public static bladerf_version bladerf_fw_version(IntPtr dev)
+        {
+            bladerf_version ret = new bladerf_version();
+            bladerf_fw_version_native(dev, ref ret);
+            return ret;
+        }
+
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int bladerf_set_rx_mux(IntPtr dev, bladerf_rx_mux mux);
+
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
+        public static unsafe extern int bladerf_get_rx_mux(IntPtr dec, out bladerf_rx_mux mode);
+
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
+        public static unsafe extern int bladerf_set_rational_smb_frequency(IntPtr dev, ref bladerf_rational_rate rate, out bladerf_rational_rate actual);
+
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
+        public static unsafe extern int bladerf_set_smb_frequency(IntPtr dev, UInt32 rate, out UInt32 actual);
+
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
+        public static unsafe extern int bladerf_get_rational_smb_frequency(IntPtr dev, out bladerf_rational_rate rate);
+
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
+        public static unsafe extern int bladerf_get_smb_frequency(IntPtr dev, out UInt32 rate);
+
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void bladerf_set_usb_reset_on_open(bool enabled);
+
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int bladerf_device_reset(IntPtr dev);
 
         [DllImport("bladeRF", EntryPoint = "bladerf_fpga_version", CallingConvention = CallingConvention.Cdecl)]
         public static extern void bladerf_fpga_version_native(IntPtr dev, ref bladerf_version version);
@@ -395,7 +597,10 @@ namespace SDRSharp.BladeRF
         [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_get_frequency(IntPtr dev, bladerf_module module, out uint frequency);
 
-        [DllImport("bladeRF", EntryPoint = "bladerf_get_serial", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
+        public static unsafe extern int bladerf_get_quick_tune(IntPtr dev, bladerf_module module, out bladerf_quick_tune quick_tune);
+
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         public static extern int bladerf_get_serial(IntPtr dev, out string serial);
 
         [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
@@ -421,16 +626,77 @@ namespace SDRSharp.BladeRF
         [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_expansion_attach(IntPtr dev, bladerf_xb xb);
 
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
+        public static unsafe extern int bladerf_expansion_get_attached(IntPtr dev, out bladerf_xb xb);
+
+        public static int bladerf_xb100_attach(IntPtr dev)
+        {
+            return bladerf_expansion_attach(dev, bladerf_xb.BLADERF_XB_100);
+        }
+
         public static int bladerf_xb200_attach(IntPtr dev)
         {
             return bladerf_expansion_attach(dev, bladerf_xb.BLADERF_XB_200);
+        }
+
+        public static int bladerf_xb300_attach(IntPtr dev)
+        {
+            return bladerf_expansion_attach(dev, bladerf_xb.BLADERF_XB_300);
         }
 
         [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_xb200_set_filterbank(IntPtr dev, bladerf_module mod, bladerf_xb200_filter filter);
 
         [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
+        public static unsafe extern int bladerf_xb200_get_filterbank(IntPtr dev, bladerf_module module, out bladerf_xb200_filter filter);
+
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int bladerf_xb200_set_path(IntPtr dev, bladerf_module module, bladerf_xb200_path path);
+
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
+        public static unsafe extern int bladerf_xb200_get_path(IntPtr dev, bladerf_module module, out bladerf_xb200_path path);
+
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int bladerf_xb300_set_trx(IntPtr dev, bladerf_xb300_trx trx);
+
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
+        public static unsafe extern int bladerf_xb300_get_trx(IntPtr dev, bladerf_xb300_trx trx);
+
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int bladerf_xb300_set_amplifier_enable(IntPtr dev, bladerf_xb300_amplifier amp, int enable);
+
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int bladerf_xb300_get_amplifier_enable(IntPtr dev, bladerf_xb300_amplifier amp, out int enable);
+
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
+        public static unsafe extern int bladerf_xb300_get_output_power(IntPtr dev, out float val);
+
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int bladerf_set_vctcxo_tamer_mode(IntPtr dev, bladerf_vctcxo_tamer_mode mode);
+
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
+        public static unsafe extern int bladerf_get_vctcxo_tamer_mode(IntPtr dev, out bladerf_vctcxo_tamer_mode mode);
+
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern void bladerf_log_set_verbosity(bladerf_log_level level);
+
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
+        public static unsafe extern int bladerf_expansion_gpio_read(IntPtr dev, out UInt32 val);
+
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int bladerf_expansion_gpio_write(IntPtr dev, UInt32 val);
+
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int bladerf_expansion_gpio_masked_write(IntPtr dev, UInt32 mask, UInt32 value);
+
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
+        public static unsafe extern int bladerf_expansion_gpio_dir_read(IntPtr dev, out UInt32 outputs);
+
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int bladerf_expansion_gpio_dir_write(IntPtr dev, UInt32 outputs);
+
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int bladerf_expansion_gpio_dir_masked_write(IntPtr dev, UInt32 mask, UInt32 outputs);
 
         public static string backend_to_str(bladerf_backend backend)
         {
