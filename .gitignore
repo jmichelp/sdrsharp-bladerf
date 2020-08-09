@@ -7,3 +7,12 @@ Release/*.xml
 Release/SDRSharp.BladeRF.dll.*
 *.suo
 *.user
+.vs/SDRSharp.BladeRF/v15/Server/sqlite3/db.lock
+.vs/SDRSharp.BladeRF/v15/Server/sqlite3/storage.ide
+.vs/SDRSharp.BladeRF/v15/Server/sqlite3/storage.ide-shm
+.vs/SDRSharp.BladeRF/v15/Server/sqlite3/storage.ide-wal
+BladeRF/SDRSharp.Common.dll
+BladeRF/SDRSharp.Radio.dll
+wrapping progress/bladeRF1.h
+wrapping progress/libbladeRF.h
+wrapping progress/bladeRF2.h
