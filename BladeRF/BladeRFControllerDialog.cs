@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Windows.Forms;
 using SDRSharp.Common;
 using SDRSharp.Radio;
+using libbladeRF_wrapper;
 
 namespace SDRSharp.BladeRF
 {
@@ -16,29 +17,32 @@ namespace SDRSharp.BladeRF
             InitializeComponent();
 
             _owner = owner;
+
             InitSampleRates();
             InitBandwidths();
             InitXB200Filters();
             var devices = DeviceDisplay.GetActiveDevices();
             deviceComboBox.Items.Clear();
             if (devices != null)
+            {
                 deviceComboBox.Items.AddRange(devices);
-
+            }
             samplerateComboBox.SelectedIndex = Utils.GetIntSetting("BladeRFSampleRate", 3);
             samplingModeComboBox.SelectedIndex = Utils.GetIntSetting("BladeRFSamplingMode", (int) bladerf_sampling.BLADERF_SAMPLING_INTERNAL);
-            rxVga1GainTrackBar.Value = Utils.GetIntSetting("BladeRFVGA1Gain", 20);
-            rxVga2GainTrackBar.Value = Utils.GetIntSetting("BladeRFVGA2Gain", 20);
-            lnaGainTrackBar.Value = Utils.GetIntSetting("BladeRFLNAGain", (int) bladerf_lna_gain.BLADERF_LNA_GAIN_MID);
+            overallGainTrackBar.Value = Utils.GetIntSetting("BladeRFOverallGain", 10);
+            lnaGainTrackBar.Value = Utils.GetIntSetting("BladeRFLNAGain", 3);
+            rxVga1GainTrackBar.Value = Utils.GetIntSetting("BladeRFRXVGA1Gain", 23);
+            rxVga2GainTrackBar.Value = Utils.GetIntSetting("BladeRFRXVGA2Gain", 0);
             fpgaTextBox.Text = Utils.GetStringSetting("BladeRFFPGA", "");
             bandwidthComboBox.SelectedIndex = Utils.GetIntSetting("BladeRFBandwidth", 0);
 
             xb200Checkbox.Checked = Utils.GetBooleanSetting("BladeRFXB200Enabled");
             xb200FilterCombobox.SelectedIndex = Utils.GetIntSetting("BladeRFXB200Filter", 0);
 
-            labelVersion.Text = "libbladerf " + NativeMethods.bladerf_version().describe;
+            labelVersion.Text = "libbladerf " + NativeMethods.bladerf_version().description;
 
-            rxVga1gainLabel.Text = rxVga1GainTrackBar.Value + " dB";
-            rxVga2gainLabel.Text = rxVga2GainTrackBar.Value + " dB";
+            rxVga1GainLabel.Text = rxVga1GainTrackBar.Value + " dB";
+            rxVga2GainLabel.Text = rxVga2GainTrackBar.Value + " dB";
             lnaGainLabel.Text = String.Format("{0} dB", 3 * (lnaGainTrackBar.Value - 1)); ;
 
             _initialized = true;
@@ -214,6 +218,7 @@ namespace SDRSharp.BladeRF
             rxVga1GainTrackBar_Scroll(null, null);
             rxVga2GainTrackBar_Scroll(null, null);
             lnaGainTrackBar_Scroll(null, null);
+            overallGainTrackBar_Scroll(null, null);
             xb200Checkbox_CheckedChanged(null, null);
             xb200FilterCombobox_SelectedIndexChanged(null, null);
             bandwidthComboBox_SelectedIndexChanged(null, null);
@@ -226,8 +231,8 @@ namespace SDRSharp.BladeRF
                 return;
             }
             _owner.Device.VGA1Gain = rxVga1GainTrackBar.Value;
-            rxVga1gainLabel.Text = rxVga1GainTrackBar.Value + " dB";
-            Utils.SaveSetting("BladeRFVGA1Gain", rxVga1GainTrackBar.Value);
+            rxVga1GainLabel.Text = rxVga1GainTrackBar.Value + " dB";
+            Utils.SaveSetting("BladeRFRXVGA1Gain", rxVga1GainTrackBar.Value);
         }
 
         private void rxVga2GainTrackBar_Scroll(object sender, EventArgs e)
@@ -237,8 +242,8 @@ namespace SDRSharp.BladeRF
                 return;
             }
             _owner.Device.VGA2Gain = rxVga2GainTrackBar.Value;
-            rxVga2gainLabel.Text = rxVga2GainTrackBar.Value + " dB";
-            Utils.SaveSetting("BladeRFVGA2Gain", rxVga2GainTrackBar.Value);
+            rxVga2GainLabel.Text = rxVga2GainTrackBar.Value + " dB";
+            Utils.SaveSetting("BladeRFRXVGA2Gain", rxVga2GainTrackBar.Value);
         }
 
         private void lnaGainTrackBar_Scroll(object sender, EventArgs e)
@@ -247,10 +252,22 @@ namespace SDRSharp.BladeRF
             {
                 return;
             }
-            _owner.Device.LNAGain = (uint) lnaGainTrackBar.Value;
-            lnaGainLabel.Text = String.Format("{0} dB", 3 * (lnaGainTrackBar.Value - 1));
+            _owner.Device.LNAGain = lnaGainTrackBar.Value;
+            lnaGainLabel.Text = lnaGainTrackBar.Value + " dB";
             Utils.SaveSetting("BladeRFLNAGain", lnaGainTrackBar.Value);
         }
+
+        private void overallGainTrackBar_Scroll(object sender, EventArgs e)
+        {
+            if (!Initialized)
+            {
+                return;
+            }
+            _owner.Device.OverallGain = overallGainTrackBar.Value;
+            overallGainLabel.Text = overallGainTrackBar.Value + " dB";
+            Utils.SaveSetting("BladeRFOverallGain", overallGainTrackBar.Value);
+        }
+
 
         private void fpgaButton_Click(object sender, EventArgs e)
         {
@@ -333,26 +350,24 @@ namespace SDRSharp.BladeRF
 
         public unsafe static DeviceDisplay[] GetActiveDevices()
         {
-            IntPtr _tmp;
-            bladerf_devinfo* devlist;
-            int count = NativeMethods.bladerf_get_device_list(out _tmp);
-            if (_tmp == IntPtr.Zero)
+            bladerf_devinfo[] devlist;
+            int count = NativeMethods.bladerf_get_device_list(out devlist);
+            if (count <= 0)
             {
                 return null;
             }
             DeviceDisplay[] result = new DeviceDisplay[count];
-            devlist = (bladerf_devinfo*)_tmp;
-
             for (int i = 0; i < count; i++)
             {
-                int bus = (int)(devlist[i].usb_bus);
-                int address = (int)(devlist[i].usb_addr);
-                string backend = NativeMethods.backend_to_str(devlist[i].backend);
-                string serial = new String(devlist[i].serial, 0, 32, System.Text.Encoding.ASCII);
+                bladerf_devinfo device = devlist[i];
+                int bus = (int)(device.usb_bus);
+                int address = (int)(device.usb_addr);
+                string backend = NativeMethods.bladerf_backend_str(device.backend);
+                string serial = device.serial;
                 string name = String.Format("BladeRF ({0}) SN#{1}..{2} ({3}:{4})", backend, serial.Substring(0, 4), serial.Substring(27, 4), bus, address);
                 result[i] = new DeviceDisplay { Index = i, Name = name, Serial = serial, Address = address, Bus = bus, Backend = backend };
             }
-            NativeMethods.bladerf_free_device_list(_tmp);
+            //NativeMethods.bladerf_free_device_list(devlist); //Crashes
             return result;
         }
 

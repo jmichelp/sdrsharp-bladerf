@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.ComponentModel;
-
 using SDRSharp.Common;
 using SDRSharp.Radio;
+using libbladeRF_wrapper;
 
 namespace SDRSharp.BladeRF
 {
@@ -24,7 +24,7 @@ namespace SDRSharp.BladeRF
             bladerf_version v = NativeMethods.bladerf_version();
             if (v.major == 0 && v.minor < 14)
             {
-                MessageBox.Show(String.Format("Your bladerf.dll is outdated. Upgrade to v0.14+ (now using {0})", v.describe));
+                MessageBox.Show(String.Format("Your bladerf.dll is outdated. Upgrade to v0.14+ (now using {0})", v.description));
             }
         }
 
@@ -185,6 +185,28 @@ namespace SDRSharp.BladeRF
             this._frequencyCorrection = value;
             this.Frequency = this._frequency;
           }
+        }
+
+        public bool CanTune
+        {
+            get
+            {
+                return true;
+            }
+        }
+        public long MinimumTunableFrequency
+        {
+            get
+            {
+                return this._bladeRFDevice.MinFrequency;
+            }
+        }
+        public long MaximumTunableFrequency
+        {
+            get
+            {
+                return this._bladeRFDevice.MaxFrequency;
+            }
         }
 
         private unsafe void BladeRFDevice_SamplesAvailable(object sender, SamplesAvailableEventArgs e)
